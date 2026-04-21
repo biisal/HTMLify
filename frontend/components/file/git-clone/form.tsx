@@ -44,16 +44,13 @@ export const GitCloneForm = ({ user }: { user: UserFullInfo }) => {
 
   const onSubmit = async (data: GitCloneFormType) => {
     setIsPending(true);
-    try {
-      await gitCloneFile(data);
+    const { error } = await gitCloneFile(data);
+    if (error) {
+      toast.error(error);
+    } else {
       toast.success("Repository cloned successfully");
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to clone repository",
-      );
-    } finally {
-      setIsPending(false);
     }
+    setIsPending(false);
   };
 
   return (

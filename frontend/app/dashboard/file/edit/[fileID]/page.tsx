@@ -3,6 +3,7 @@ import {
   getFileContentById,
   getFileInfoByPathOrID,
 } from "@/lib/modules/file/file.api";
+import { FileIDResponse } from "@/lib/modules/file/file.types";
 import { getFileContentType } from "@/lib/modules/file/file.utils";
 import { getMe } from "@/lib/modules/user/user.actions";
 
@@ -19,19 +20,21 @@ export default async function NewFileCreatePage({
   const { fileID } = await params;
 
   let fileData: {
-    fileInfo: Awaited<ReturnType<typeof getFileInfoByPathOrID>>;
+    fileInfo: FileIDResponse;
     content: string | undefined;
     mediaUrl: string | null;
   } | null = null;
 
-  try {
-    const fileInfo = await getFileInfoByPathOrID({ id: Number(fileID) });
-    const fileContentResp = await getFileContentById(fileInfo.id);
-    const content = await fileContentResp.text();
-    fileData = { fileInfo, content, mediaUrl: fileContentResp.url };
-  } catch (err) {
-    return err instanceof Error ? err.message : "Failed to load file";
+  const { data, error } = await getFileInfoByPathOrID({ id: Number(fileID) });
+  if (error || !data) {
+    return error || "Failed to load file";
   }
+  const fileContentResp = await getFileContentById(data.id);
+  if (!fileContentResp) {
+    return "Failed to load file content";
+  }
+  const content = await fileContentResp.text();
+  fileData = { fileInfo: data, content, mediaUrl: fileContentResp.url };
 
   const contentType = getFileContentType(fileData.fileInfo.path);
 
@@ -42,6 +45,10 @@ export default async function NewFileCreatePage({
         user={user}
         initialData={{
           ...fileData.fileInfo,
+          mode:
+            fileData.fileInfo.mode === "raw"
+              ? "render"
+              : fileData.fileInfo.mode,
           content: fileData.content,
           mediaUrl: fileData.mediaUrl,
           fileType: contentType,

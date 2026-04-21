@@ -8,13 +8,11 @@ export const AUTH_ONLY_ROUTES = ["/signin", "/signup"];
 export const PROTECTED_ROUTES = ["/dashboard"];
 
 async function fetchMe(): Promise<UserFullInfo | null> {
-  try {
-    const res = await APICall(`${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/users/me`);
-    if (!res.ok) return null;
-    return (await res.json()) as UserFullInfo;
-  } catch {
-    return null;
-  }
+  const { response, error } = await APICall(
+    `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/users/me`,
+  );
+  if (error) return null;
+  return (await response?.json()) as UserFullInfo;
 }
 
 export const handleAuthOrProtectedRoute = async (

@@ -14,14 +14,10 @@ export async function getMe(): Promise<UserFullInfo | null> {
     }
   } catch {}
 
-  try {
-    const res = await APICall(`${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/users/me`);
+  const { response, error } = await APICall(
+    `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/users/me`,
+  );
+  if (error) return null;
 
-    if (!res.ok) return null;
-
-    return res.json() as Promise<UserFullInfo>;
-  } catch (error) {
-    console.error("[getMe] Error fetching user info:", error);
-    return null;
-  }
+  return response?.json() as Promise<UserFullInfo>;
 }

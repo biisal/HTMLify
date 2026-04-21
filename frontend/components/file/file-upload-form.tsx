@@ -146,14 +146,15 @@ export const FileForm = ({
     }
 
     setIsPending(true);
-    try {
-      const formData = zodToFormData(data);
-      if (mode === "upload" || initialData?.id === undefined) {
-        await uploadFile(formData);
-      } else {
-        await updateFile(initialData.id, formData);
-      }
+    const formData = zodToFormData(data);
+    const { error } =
+      mode === "upload" || initialData?.id === undefined
+        ? await uploadFile(formData)
+        : await updateFile(initialData.id, formData);
 
+    if (error) {
+      toast.error(error);
+    } else {
       toast.success(
         `File ${mode === "update" ? "updated" : "uploaded"} successfully`,
       );
@@ -163,13 +164,8 @@ export const FileForm = ({
         setCurrentFileType("other");
         setMediaUrl(null);
       }
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to submit file",
-      );
-    } finally {
-      setIsPending(false);
     }
+    setIsPending(false);
   };
 
   const handleFileChange = (

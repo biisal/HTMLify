@@ -1,5 +1,3 @@
-import React from "react";
-
 import { getTmpFolderFiles } from "@/lib/tmp-folder/tmp-folder.api";
 
 const TmpFolderPage = async ({
@@ -8,8 +6,8 @@ const TmpFolderPage = async ({
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
-  const files = await getTmpFolderFiles(id);
-  if (!files) {
+  const { data: files, error } = await getTmpFolderFiles(id);
+  if (error || !files) {
     return <div>Tmp folder not found</div>;
   }
   return (

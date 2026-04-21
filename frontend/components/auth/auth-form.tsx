@@ -70,26 +70,22 @@ export function SigninForm({ mode, className, ...props }: SigninFormProps) {
 
   const handleSubmit = async (data: LoginSchema | SignUpSchema) => {
     setIsPending(true);
-    try {
-      if (mode === "signin") {
-        await signIn(data as LoginSchema);
-      } else {
-        await signUp(data as SignUpSchema);
-      }
+    const res =
+      mode === "signin"
+        ? await signIn(data as LoginSchema)
+        : await signUp(data as SignUpSchema);
 
-      toast.success(
-        mode === "signup"
-          ? "Account created! Welcome"
-          : "Signed in successfully",
-      );
-      router.refresh();
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Authentication failed",
-      );
-    } finally {
-      setIsPending(false);
+    setIsPending(false);
+
+    if (res.error) {
+      toast.error(res.error);
+      return;
     }
+
+    toast.success(
+      mode === "signup" ? "Account created! Welcome" : "Signed in successfully",
+    );
+    router.refresh();
   };
 
   return (

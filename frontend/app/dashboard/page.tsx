@@ -31,7 +31,20 @@ const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
     ? max(parseInt(page_size), 1)
     : env.NEXT_PUBLIC_PAGE_SIZE;
 
-  const data = await getFolderByPath(path, true, currentPage, pageSize);
+  const { data, error } = await getFolderByPath(
+    path,
+    true,
+    currentPage,
+    pageSize,
+  );
+  if (error) {
+    return (
+      <div className="flex flex-col gap-4 p-6 w-full">
+        <DashboardBreadcrumb path={path} />
+        <p className="text-destructive">{error}</p>
+      </div>
+    );
+  }
   const items = data?.items ?? [];
   const totalItems = data?.items_count ?? 0;
 

@@ -45,18 +45,12 @@ export const serverFile = async (pathname: string) => {
     mode = firstPath;
   }
 
-  try {
-    console.log("filePath", filePath);
-    const fileInfo = await getFileInfoByPathOrID({ path: filePath });
-    if (!fileInfo) {
-      return NextResponse.next();
-    }
-    if (mode === "source") {
-      mode = fileInfo.mode;
-    }
-    return await serveFileContent(fileInfo.id, mode, filePath);
-  } catch (error) {
-    console.error("Proxy error:", error);
+  const { data: fileInfo, error: fileInfoError } = await getFileInfoByPathOrID({ path: filePath });
+  if (fileInfoError || !fileInfo) {
     return NextResponse.next();
   }
+  if (mode === "source") {
+    mode = fileInfo.mode;
+  }
+  return await serveFileContent(fileInfo.id, mode, filePath);
 };

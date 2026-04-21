@@ -25,15 +25,14 @@ export function DeleteAlertDialog({ id, path }: AlertDialogProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const handleDelete = async () => {
-    try {
-      await deleteFile(id);
-      setOpen(false);
-      router.refresh();
-    } catch (e) {
-      console.error(e);
-      toast.error(e instanceof Error ? e.message : "Failed to delete file");
+    const { error } = await deleteFile(id);
+    if (error) {
+      toast.error(error);
+      return;
     }
     setOpen(false);
+    router.refresh();
+    toast.success("File deleted successfully");
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -62,19 +62,19 @@ const TmpFolderForm = () => {
       },
     ) => {
       const data = response.body as unknown as UploadSuccessResponse;
-      const res = await AddFileToTmpFolder({
+      const { data: res, error } = await AddFileToTmpFolder({
         tmpFileId: data.id,
         authCode: tmpFolder.auth_code,
         tmpFolderId: tmpFolder.id,
       });
       setTotalUpload((prev) => ({ ...prev, total: prev.total + 1 }));
-      if (res) {
-        toast.success("File added to tmp folder successfully");
-        setTotalUpload((prev) => ({ ...prev, success: prev.success + 1 }));
-      } else {
+      if (error || !res) {
+        toast.error(error || "Failed to add file to tmp folder");
         setTotalUpload((prev) => ({ ...prev, failed: prev.failed + 1 }));
-        toast.error("Failed to add file to tmp folder");
+        return;
       }
+      toast.success("File added to tmp folder successfully");
+      setTotalUpload((prev) => ({ ...prev, success: prev.success + 1 }));
     };
     uppy.on("upload-success", handleTmpFileUpload);
     return () => {
@@ -93,12 +93,14 @@ const TmpFolderForm = () => {
     });
   }, [uppy, folderPath]);
   const handleCreateTmpFolder = async () => {
-    const data = await createTmpFolder(folderPath);
-    if (data) {
-      setTmpFolder(data);
-      uppy.cancelAll();
-      setTotalUpload({ success: 0, failed: 0, total: 0 });
+    const { data, error } = await createTmpFolder(folderPath);
+    if (error || !data) {
+      toast.error(error || "Failed to create temporary folder");
+      return;
     }
+    setTmpFolder(data);
+    uppy.cancelAll();
+    setTotalUpload({ success: 0, failed: 0, total: 0 });
   };
   return (
     <div>
