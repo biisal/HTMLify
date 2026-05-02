@@ -52,7 +52,8 @@ const StaticServe = async ({
 
   const contentType = response.headers.get("content-type");
   const fileType = getFileContentType(filename, contentType);
-  const isMedia = fileType === "img" || fileType === "video" || fileType === "audio";
+  const isMedia =
+    fileType === "img" || fileType === "video" || fileType === "audio";
 
   const fileData: FileData = isMedia
     ? { isMedia: true, url: response.url, fileType, contentType }

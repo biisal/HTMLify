@@ -2,7 +2,7 @@
 
 import { ArrowRight, Menu, Search } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 
 import { Logo } from "@/components/logo";
@@ -31,6 +31,12 @@ const NAV_LINKS = [
   { name: "API", href: "/api" },
 ];
 
+const NAV_SEARCH_LINKS = NAV_LINKS.concat(
+  { name: "Upload Files", href: "/dashboard/file/upload" },
+  { name: "Add New File", href: "/dashboard/file/new" },
+  { name: "Git Clone", href: "/dashboard/file/git-clone" },
+  { name: "Temporary File", href: "/dashboard/tmp" },
+);
 function NavbarSearch() {
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
@@ -51,7 +57,7 @@ function NavbarSearch() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center justify-between gap-1 sm:gap-2 rounded-full bg-muted/30 px-3 py-1.5 hover:bg-muted/50 transition-colors group border border-transparent"
+        className="flex items-center justify-between gap-1 sm:gap-2 rounded-md bg-muted/30 px-3 py-1.5 hover:bg-muted/50 transition-colors group border border-transparent"
       >
         <div className="flex items-center gap-2">
           <Search className="h-4 w-4 text-muted-foreground" />
@@ -68,7 +74,7 @@ function NavbarSearch() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Links">
-            {NAV_LINKS.map((link) => (
+            {NAV_SEARCH_LINKS.map((link) => (
               <CommandItem
                 key={link.href}
                 value={link.name}
@@ -88,78 +94,68 @@ function NavbarSearch() {
 }
 
 export function Navbar() {
+  const pathname = usePathname();
   return (
-    <nav className="flex backdrop-blur-3xl sticky top-4 z-50 w-full items-center justify-between py-4 px-8 bg-foreground/5 rounded-full text-foreground">
-      <Link href="/" className="flex items-center gap-3">
-        <Logo />
-        <span className="text-lg font-bold tracking-tight text-foreground">
-          {env.NEXT_PUBLIC_SITE_NAME}
-        </span>
-      </Link>
+    <nav className="backdrop-blur-3xl fixed top-0 w-full z-50 py-4 px-8 bg-foreground/5 text-foreground">
+      <div className="container mx-auto w-full flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3">
+          <Logo />
+          <span className="text-lg font-bold tracking-tight text-foreground">
+            {env.NEXT_PUBLIC_SITE_NAME}
+          </span>
+        </Link>
 
-      <div className="hidden lg:flex items-center gap-6 rounded-full bg-muted/40 px-6 py-2.5">
-        {NAV_LINKS.map((link, index) => (
-          <Link
-            key={index}
-            href={link.href}
-            className={`text-sm font-medium transition-colors hover:text-foreground ${
-              index === 0
-                ? "text-foreground hover:opacity-80"
-                : "text-muted-foreground"
-            }`}
-          >
-            {link.name}
-          </Link>
-        ))}
-      </div>
-
-      <div className="flex items-center gap-4">
-        <NavbarSearch />
-
-        <div className="hidden md:block">
-          <Button className="h-9 rounded-full px-5 text-sm font-medium">
-            Get Started <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+        <div className="hidden lg:flex items-center gap-6 rounded-md bg-muted/40 px-6 py-2.5">
+          {NAV_LINKS.map((link, index) => (
+            <Link
+              key={index}
+              href={link.href}
+              className={`text-sm font-medium transition-colors hover:text-foreground ${
+                link.href === pathname
+                  ? "text-foreground hover:opacity-80"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
         </div>
 
-        <div className="md:hidden">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 border-none outline-none"
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-52 flex flex-col gap-1 p-2"
-            >
-              {NAV_LINKS.map((link, index) => (
-                <DropdownMenuItem key={index} asChild>
-                  <Link
-                    href={link.href}
-                    className={`cursor-pointer font-medium ${
-                      index === 0
-                        ? ""
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-              <div className="my-1 h-px bg-muted" />
-              <DropdownMenuItem asChild>
-                <Button className="w-full justify-start rounded-md px-2 mt-1">
-                  Get Started <ArrowRight className="ml-2 h-4 w-4" />
+        <div className="flex items-center gap-4">
+          <NavbarSearch />
+          <div className="lg:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 border-none outline-none"
+                >
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
                 </Button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-52 flex flex-col gap-1 p-2"
+              >
+                {NAV_LINKS.map((link, index) => (
+                  <DropdownMenuItem key={index} asChild>
+                    <Link
+                      href={link.href}
+                      className={`cursor-pointer font-medium ${
+                        index === 0
+                          ? ""
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </nav>

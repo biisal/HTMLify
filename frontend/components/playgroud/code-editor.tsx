@@ -1,16 +1,17 @@
 "use client";
 import { MergeView } from "@codemirror/merge";
 import { EditorState } from "@codemirror/state";
-import { oneDark } from "@codemirror/theme-one-dark";
 import { basicSetup, EditorView } from "codemirror";
 import { useEffect, useRef, useState } from "react";
 
+import { ayuDark } from "@/components/playgroud/themes";
 import type { CodeEditorProps } from "@/lib/modules/playgournd/editor.types";
 import {
   getLanguageByPath,
   getLanguageExtension,
   LANGUAGE_GROUPS,
 } from "@/lib/modules/playgournd/editor.utils";
+import { cn } from "@/lib/utils";
 
 import {
   Select,
@@ -27,24 +28,25 @@ const editorTheme = EditorView.theme({
   ".cm-scroller": { overflow: "auto" },
 });
 
-export default function CodeEditor({
+export interface RawCodeEditorProps
+  extends CodeEditorProps, Omit<React.HTMLProps<HTMLDivElement>, "onChange"> {
+  diff?: boolean;
+  originalCode?: string;
+  currentLanguage: string;
+}
+
+export function RawCodeEditor({
   code,
-  language,
   onChange,
   diff,
   originalCode,
-  path,
-}: CodeEditorProps & {
-  diff?: boolean;
-  originalCode?: string;
-  path?: string;
-}) {
+  currentLanguage,
+  language,
+  ...props
+}: RawCodeEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const mergeViewRef = useRef<MergeView | null>(null);
-  const [currentLanguage, setCurrentLanguage] = useState(
-    language || getLanguageByPath(path || "") || "plain",
-  );
 
   // Re-create editor when language or diff mode changes
   useEffect(() => {
@@ -53,7 +55,7 @@ export default function CodeEditor({
     const extensions = [
       basicSetup,
       getLanguageExtension(currentLanguage),
-      oneDark,
+      ayuDark,
       editorTheme,
     ];
 
@@ -137,54 +139,114 @@ export default function CodeEditor({
   }, [code, diff]);
 
   return (
-    <div className="h-[70vh] my-4 rounded-xl border border-border/60 overflow-hidden shadow-sm flex flex-col min-w-0">
-      {/* Header bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-muted/60 border-b border-border/50 backdrop-blur-sm shrink-0">
-        <div className="flex items-center gap-2 min-w-0">
-          {/* Traffic light dots */}
-          <div className="flex items-center gap-1.5 mr-2 shrink-0">
-            <span className="w-3 h-3 rounded-full bg-red-400/70" />
-            <span className="w-3 h-3 rounded-full bg-yellow-400/70" />
-            <span className="w-3 h-3 rounded-full bg-green-400/70" />
-          </div>
+    <div
+      {...props}
+      className={cn("flex-1 overflow-hidden bg-black", props.className)}
+    >
+      <div ref={containerRef} className="w-full h-full min-h-[65vh]" />
+    </div>
+  );
+}
 
-          {/* Path breadcrumbs */}
-          <div className="flex items-center gap-1 text-xs text-muted-foreground font-mono min-w-0">
-            {path?.split("/").map((segment, i, arr) => (
-              <span key={i} className="flex items-center gap-1 min-w-0">
-                {i > 0 && <span className="text-border shrink-0">/</span>}
-                <span
-                  className={
-                    i === arr.length - 1
-                      ? "text-foreground/80 font-medium truncate"
-                      : "truncate"
-                  }
-                >
-                  {segment}
-                </span>
-              </span>
-            ))}
-          </div>
+export interface EditorHeaderProps {
+  path?: string;
+  onLanguageChange: (language: string) => void;
+  currentLanguage?: string;
+}
+
+export function EditorHeader({
+  path,
+  onLanguageChange,
+  currentLanguage,
+}: EditorHeaderProps) {
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-between px-4 py-2 bg-muted/60",
+        "border-b border-border/50 backdrop-blur-sm shrink-0",
+      )}
+    >
+      <div className="flex items-center gap-2 min-w-0">
+        {/* Traffic light dots */}
+        <div className="flex items-center gap-1.5 mr-2 shrink-0">
+          <span className="w-3 h-3 rounded-full bg-red-400/70" />
+          <span className="w-3 h-3 rounded-full bg-yellow-400/70" />
+          <span className="w-3 h-3 rounded-full bg-green-400/70" />
         </div>
 
-        {/* Language badge */}
-        <LangugesMenu onChange={setCurrentLanguage} />
+        {/* Path breadcrumbs */}
+        <div className="flex items-center gap-1 text-xs text-muted-foreground font-mono min-w-0">
+          {path?.split("/").map((segment, i, arr) => (
+            <span key={i} className="flex items-center gap-1 min-w-0">
+              {i > 0 && <span className="text-border shrink-0">/</span>}
+              <span
+                className={
+                  i === arr.length - 1
+                    ? "text-foreground/80 font-medium truncate"
+                    : "truncate"
+                }
+              >
+                {segment}
+              </span>
+            </span>
+          ))}
+        </div>
       </div>
 
-      <div className="flex-1 overflow-hidden">
-        <div ref={containerRef} className="w-full h-full min-h-[65vh]" />
-      </div>
+      {/* Language badge */}
+      <LangugesMenu
+        onChange={onLanguageChange}
+        defaultValue={currentLanguage}
+      />
+    </div>
+  );
+}
+
+export default function CodeEditor({
+  code,
+  language,
+  onChange,
+  diff,
+  originalCode,
+  path,
+}: CodeEditorProps & {
+  diff?: boolean;
+  originalCode?: string;
+  path?: string;
+}) {
+  const [currentLanguage, setCurrentLanguage] = useState(
+    language || getLanguageByPath(path || "") || "plain",
+  );
+
+  return (
+    <div className="h-[70vh] my-4 rounded-xl border border-border/60 overflow-hidden shadow-sm flex flex-col min-w-0">
+      <EditorHeader
+        path={path}
+        onLanguageChange={setCurrentLanguage}
+        currentLanguage={currentLanguage}
+      />
+
+      <RawCodeEditor
+        code={code}
+        onChange={onChange}
+        diff={diff}
+        originalCode={originalCode}
+        currentLanguage={currentLanguage}
+        language={language}
+      />
     </div>
   );
 }
 
 const LangugesMenu = ({
   onChange,
+  defaultValue,
 }: {
   onChange: (language: string) => void;
+  defaultValue?: string;
 }) => {
   return (
-    <Select onValueChange={(value) => onChange(value)}>
+    <Select onValueChange={(value) => onChange(value)} value={defaultValue}>
       <SelectTrigger className="w-full max-w-48">
         <SelectValue placeholder="Select a language" />
       </SelectTrigger>

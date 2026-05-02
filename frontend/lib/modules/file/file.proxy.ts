@@ -45,7 +45,9 @@ export const serverFile = async (pathname: string) => {
     mode = firstPath;
   }
 
-  const { data: fileInfo, error: fileInfoError } = await getFileInfoByPathOrID({ path: filePath });
+  const { data: fileInfo, error: fileInfoError } = await getFileInfoByPathOrID({
+    path: filePath,
+  });
   if (fileInfoError || !fileInfo) {
     return NextResponse.next();
   }

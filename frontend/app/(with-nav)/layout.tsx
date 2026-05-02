@@ -7,10 +7,8 @@ export default function RootLayout({
 }>) {
   return (
     <>
-      <div className="container pt-10 px-4 mx-auto">
-        <Navbar />
-      </div>
-      <main className="container mx-auto pt-10">{children}</main>
+      <Navbar />
+      <main className="container mx-auto pt-20">{children}</main>
     </>
   );
 }

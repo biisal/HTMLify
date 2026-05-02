@@ -22,8 +22,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { env } from "@/lib/env";
 
-const navMan = [
+const navFile = [
+  {
+    title: "Dashboard",
+    url: "/dashboard",
+    icon: Home,
+  },
   {
     title: "Upload Files",
     url: "/dashboard/file/upload",
@@ -59,18 +65,13 @@ const navPen = [
   },
   {
     title: "New Pen",
-    url: "#",
+    url: "/dashboard/pens/edit",
     icon: PlusSquare,
   },
   {
     title: "Notifications",
     url: "#",
     icon: Bell,
-  },
-  {
-    title: "Home",
-    url: "/dashboard",
-    icon: Home,
   },
   {
     title: "Logout",
@@ -90,9 +91,11 @@ export const DashboardSidebar = ({
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <Link href="/dashboard">
+              <Link href="/">
                 <Logo />
-                <span className="text-base font-semibold">Dashboard</span>
+                <span className="text-base font-semibold">
+                  {env.NEXT_PUBLIC_SITE_NAME}
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -100,7 +103,7 @@ export const DashboardSidebar = ({
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu></SidebarMenu>
-        <NavMain label="Files" items={navMan} />
+        <NavMain label="Files" items={navFile} />
         <NavMain label="Pens" items={navPen} />
       </SidebarContent>
       {/* <SidebarFooter>
