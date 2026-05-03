@@ -30,11 +30,13 @@ export const RawCodeEditor = ({
   code,
   onChange,
   language,
+  ...props
 }: RawCodeEditorProps) => {
   const { resolvedTheme } = useTheme();
   const theme = resolvedTheme === "light" ? "light" : "vs-dark";
   return (
     <Editor
+      className={props.className}
       theme={theme}
       height="100%"
       value={code}

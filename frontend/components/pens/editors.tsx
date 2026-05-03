@@ -1,53 +1,57 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { ElementType, JSX, useEffect, useRef, useState } from "react";
 
 import { CSS, HTML, JavaScript } from "@/components/icons";
 import { Loader } from "@/components/loader";
+import { EditorSettingsDrawer } from "@/components/pens/editor-settings";
 import { RawCodeEditor } from "@/components/playgroud/code-editor";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import useDebounce from "@/hooks/use-debounce";
+import { EditorProvider, useEditor } from "@/hooks/use-editor";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const languages = {
+const languages: Record<Language, { label: string; Icon: ElementType }> = {
   html: { label: "HTML", Icon: HTML },
   css: { label: "CSS", Icon: CSS },
   javascript: { label: "JavaScript", Icon: JavaScript },
 };
 
-type Language = keyof typeof languages;
+type Language = "html" | "css" | "javascript";
 
 const EditorWithHeader = ({
   language,
-  code,
-  onChange,
   hideHeader = false,
 }: {
   language: Language;
-  code: string;
-  onChange: (code: string) => void;
   hideHeader?: boolean;
 }) => {
   const { Icon, label } = languages[language];
+  const { html, setHtml, css, setCss, js, setJs } = useEditor();
+
+  const codeMap = { html, css, javascript: js };
+  const setterMap = { html: setHtml, css: setCss, javascript: setJs };
 
   return (
     <div className="h-full flex flex-col">
       {!hideHeader && (
-        <header className="sticky top-0 flex items-center gap-2 border-b border-border bg-background/80 p-3 backdrop-blur-xl">
-          <Icon className="h-5 w-5" />
-          <span className="text-sm font-medium tracking-wide">{label}</span>
+        <header className="sticky z-0 top-0 flex items-center justify-between border-b border-border bg-background/80 p-3 backdrop-blur-xl">
+          <div className="flex items-center gap-2">
+            <Icon className="h-5 w-5" />
+            <span className="text-sm font-medium tracking-wide">{label}</span>
+          </div>
+          <EditorSettingsDrawer activeLanguage={language} />
         </header>
       )}
       <div className="flex-1 overflow-hidden">
         <RawCodeEditor
-          className="h-full z-0"
+          className="h-full"
           language={language}
-          onChange={onChange}
-          code={code}
+          onChange={setterMap[language]}
+          code={codeMap[language]}
         />
       </div>
     </div>
@@ -62,55 +66,50 @@ const EditorTags = ({
   onTabChange: (lang: Language) => void;
 }) => {
   return (
-    <div className="flex items-center gap-1 border-b border-border bg-background p-1.5">
-      {Object.entries(languages).map(([lang, { label, Icon }]) => (
-        <button
-          key={lang}
-          onClick={() => onTabChange(lang as Language)}
-          className={`flex cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-1.5 transition-all duration-200 flex-1 ${
-            lang === active
-              ? "bg-secondary text-foreground shadow-sm"
-              : "text-muted-foreground hover:bg-secondary/50"
-          }`}
-        >
-          <Icon className="h-4 w-4" />
-          <span className="text-xs font-semibold">{label}</span>
-        </button>
-      ))}
+    <div
+      className="flex items-center justify-between border-b 
+    border-border bg-background/50 backdrop-blur-md px-2 py-1.5"
+    >
+      <div className="flex items-center gap-1 flex-1">
+        {Object.entries(languages).map(([lang, { label, Icon }]) => (
+          <button
+            key={lang}
+            onClick={() => onTabChange(lang as Language)}
+            className={`flex flex-1 cursor-pointer items-center justify-center
+               gap-2 rounded-md px-3 py-1.5 transition-all duration-200 ${
+                 lang === active
+                   ? "bg-secondary text-foreground shadow-sm ring-1 ring-border/50"
+                   : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+               }`}
+          >
+            <Icon className="h-3.5 w-3.5" />
+            <span className="text-[11px] font-bold uppercase tracking-wider">
+              {label}
+            </span>
+          </button>
+        ))}
+      </div>
+      <div className="pl-2 ml-2 border-l border-border/50">
+        <EditorSettingsDrawer activeLanguage={active} />
+      </div>
     </div>
   );
 };
 
-interface EditorGroupProps {
-  html: string;
-  setHtml: (val: string) => void;
-  css: string;
-  setCss: (val: string) => void;
-  js: string;
-  setJs: (val: string) => void;
-}
-
-const DesktopEditors = ({
-  html,
-  setHtml,
-  css,
-  setCss,
-  js,
-  setJs,
-}: EditorGroupProps) => (
+const DesktopEditors = () => (
   <ResizablePanelGroup orientation="horizontal">
     <ResizablePanel defaultSize={50} minSize={60}>
-      <EditorWithHeader language="html" code={html} onChange={setHtml} />
+      <EditorWithHeader language="html" />
     </ResizablePanel>
     <ResizableHandle withHandle className="bg-border/50" />
     <ResizablePanel defaultSize={50}>
       <ResizablePanelGroup orientation="vertical">
         <ResizablePanel defaultSize={50} minSize={50}>
-          <EditorWithHeader language="css" code={css} onChange={setCss} />
+          <EditorWithHeader language="css" />
         </ResizablePanel>
         <ResizableHandle withHandle className="bg-border/50" />
         <ResizablePanel defaultSize={50} minSize={50}>
-          <EditorWithHeader language="javascript" code={js} onChange={setJs} />
+          <EditorWithHeader language="javascript" />
         </ResizablePanel>
       </ResizablePanelGroup>
     </ResizablePanel>
@@ -118,47 +117,20 @@ const DesktopEditors = ({
 );
 
 const MobileEditors = ({
-  html,
-  setHtml,
-  css,
-  setCss,
-  js,
-  setJs,
   activeTab,
   setActiveTab,
-}: EditorGroupProps & {
+}: {
   activeTab: Language;
   setActiveTab: (lang: Language) => void;
 }) => {
   const renderEditor = (lang: Language) => {
     switch (lang) {
       case "html":
-        return (
-          <EditorWithHeader
-            language="html"
-            code={html}
-            onChange={setHtml}
-            hideHeader
-          />
-        );
+        return <EditorWithHeader language="html" hideHeader />;
       case "css":
-        return (
-          <EditorWithHeader
-            language="css"
-            code={css}
-            onChange={setCss}
-            hideHeader
-          />
-        );
+        return <EditorWithHeader language="css" hideHeader />;
       case "javascript":
-        return (
-          <EditorWithHeader
-            language="javascript"
-            code={js}
-            onChange={setJs}
-            hideHeader
-          />
-        );
+        return <EditorWithHeader language="javascript" hideHeader />;
     }
   };
 
@@ -170,15 +142,22 @@ const MobileEditors = ({
   );
 };
 
-export const PenEditor = () => {
-  const [html, setHtml] = useState("");
-  const [css, setCss] = useState("");
-  const [js, setJs] = useState("");
+const PenEditorContent = () => {
+  const {
+    html,
+    css,
+    js,
+    debouncedHtml,
+    debouncedCss,
+    debouncedJs,
+    debouncedHead,
+    debouncedBodyClasses,
+    htmlLang,
+  } = useEditor();
+
   const [mount, setMount] = useState(false);
   const [activeTab, setActiveTab] = useState<Language>("html");
-
   const isMobile = useIsMobile();
-
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -196,14 +175,11 @@ export const PenEditor = () => {
     `;
   }, [html, css, js]);
 
-  const debouncedHtml = useDebounce(html, 500);
-  const debouncedCss = useDebounce(css, 500);
-  const debouncedJs = useDebounce(js, 500);
-
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setMount(true);
     }, 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!mount) return <Loader />;
@@ -216,25 +192,9 @@ export const PenEditor = () => {
       >
         <ResizablePanel defaultSize={70} className="flex flex-col min-h-0">
           {isMobile ? (
-            <MobileEditors
-              html={html}
-              setHtml={setHtml}
-              css={css}
-              setCss={setCss}
-              js={js}
-              setJs={setJs}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
+            <MobileEditors activeTab={activeTab} setActiveTab={setActiveTab} />
           ) : (
-            <DesktopEditors
-              html={html}
-              setHtml={setHtml}
-              css={css}
-              setCss={setCss}
-              js={js}
-              setJs={setJs}
-            />
+            <DesktopEditors />
           )}
         </ResizablePanel>
 
@@ -243,11 +203,12 @@ export const PenEditor = () => {
         <ResizablePanel defaultSize={30} maxSize={"60%"} minSize={50}>
           <iframe
             srcDoc={`
-                <html lang="en">
+                <html lang="${htmlLang}">
                   <head>
+                    ${debouncedHead}
                     <style>${debouncedCss}</style>
                   </head>
-                  <body>
+                  <body class="${debouncedBodyClasses}">
                     ${debouncedHtml}
                     <script>${debouncedJs}</script>
                   </body>
@@ -259,5 +220,13 @@ export const PenEditor = () => {
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
+  );
+};
+
+export const PenEditor = () => {
+  return (
+    <EditorProvider>
+      <PenEditorContent />
+    </EditorProvider>
   );
 };
