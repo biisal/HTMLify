@@ -7,12 +7,16 @@ import { UserFullInfo } from "@/lib/modules/user/user.types";
 export const AUTH_ONLY_ROUTES = ["/signin", "/signup"];
 export const PROTECTED_ROUTES = ["/dashboard"];
 
-async function fetchMe(): Promise<UserFullInfo | null> {
-  const { response, error } = await APICall(
+async function fetchMe(): Promise<{
+  user: UserFullInfo | null;
+  refreshedToken?: string;
+}> {
+  const { response, error, refreshedToken } = await APICall(
     `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/users/me`,
   );
-  if (error) return null;
-  return (await response?.json()) as UserFullInfo;
+  if (error) return { user: null, refreshedToken };
+  const user = (await response?.json()) as UserFullInfo;
+  return { user, refreshedToken };
 }
 
 export const handleAuthOrProtectedRoute = async (
@@ -21,30 +25,37 @@ export const handleAuthOrProtectedRoute = async (
 ): Promise<NextResponse> => {
   const isAuthOnlyRoute = AUTH_ONLY_ROUTES.some((r) => pathname.startsWith(r));
   const isProtectedRoute = PROTECTED_ROUTES.some((r) => pathname.startsWith(r));
-  const user = await fetchMe();
+  const { user, refreshedToken } = await fetchMe();
+  let response: NextResponse;
 
   if (isProtectedRoute) {
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = "/signin";
-      return NextResponse.redirect(url);
+      response = NextResponse.redirect(url);
+    } else {
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set("x-user-data", JSON.stringify(user));
+      response = NextResponse.next({
+        request: { headers: requestHeaders },
+      });
     }
-
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set("x-user-data", JSON.stringify(user));
-
-    return NextResponse.next({
-      request: { headers: requestHeaders },
-    });
-  }
-
-  if (isAuthOnlyRoute) {
+  } else if (isAuthOnlyRoute) {
     if (user) {
       const url = request.nextUrl.clone();
       url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
+      response = NextResponse.redirect(url);
+    } else {
+      response = NextResponse.next();
     }
+  } else {
+    response = NextResponse.next();
   }
 
-  return NextResponse.next();
+  if (refreshedToken) {
+    const { setCookie } = await import("@/app/api/auth/utils");
+    await setCookie(response.cookies, refreshedToken, "access_token");
+  }
+
+  return response;
 };

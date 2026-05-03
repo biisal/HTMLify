@@ -19,10 +19,12 @@ type APIResponse =
   | {
       response: Response;
       error: null;
+      refreshedToken?: string;
     }
   | {
       response: null;
       error: string;
+      refreshedToken?: string;
     };
 
 export async function APICall(
@@ -34,23 +36,29 @@ export async function APICall(
   try {
     if (isServer) {
       const { cookies } = await import("next/headers");
+      const { setCookie } = await import("@/app/api/auth/utils");
       const cookieStore = await cookies();
       let token = cookieStore.get("access_token")?.value;
 
+      let lastRefreshedToken: string | undefined;
       const performServerRefresh = async () => {
-        const refreshTokenValue = cookieStore.get("refresh_token")?.value;
-        if (!refreshTokenValue) return null;
         try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/v1/auth/refresh`,
-            { headers: { Cookie: `refresh_token=${refreshTokenValue}` } },
-          );
-          if (res.ok) {
-            const data = await res.json();
-            return data.access_token;
+          console.log("refreshing token via action");
+          const { RefreshToken } =
+            await import("@/lib/modules/auth/auth.actions");
+          const result = await RefreshToken();
+
+          if (result.access_token) {
+            const newToken = result.access_token;
+            lastRefreshedToken = newToken;
+            try {
+              await setCookie(cookieStore, newToken, "access_token");
+            } catch {}
+
+            return newToken;
           }
         } catch (e) {
-          console.error(e);
+          console.error("Refresh token error in APICall:", e);
         }
         return null;
       };
@@ -81,10 +89,15 @@ export async function APICall(
         return {
           response: null,
           error: await parseServerError(response, "Failed to fetch"),
+          refreshedToken: lastRefreshedToken,
         };
       }
 
-      return { response: response, error: null };
+      return {
+        response: response,
+        error: null,
+        refreshedToken: lastRefreshedToken,
+      };
     } else {
       console.log("this is client");
       let response = await fetch(url, {

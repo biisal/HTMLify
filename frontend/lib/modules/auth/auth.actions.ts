@@ -1,5 +1,3 @@
-import { cookies } from "next/headers";
-
 import { env } from "@/lib/env";
 
 interface RefreshTokenResponse {
@@ -9,6 +7,7 @@ interface RefreshTokenResponse {
 }
 
 export async function RefreshToken(): Promise<RefreshTokenResponse> {
+  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get("refresh_token")?.value;
   if (!refreshToken)
