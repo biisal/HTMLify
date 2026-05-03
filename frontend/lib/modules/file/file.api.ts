@@ -1,5 +1,4 @@
 import { env } from "@/lib/env";
-import { APIError, parseServerError } from "@/lib/errors";
 import { APICall as APICall } from "@/lib/fetch/api";
 import { GitCloneFormType } from "@/lib/modules/file/file.schema";
 import { FileIDResponse, FolderResponse } from "@/lib/modules/file/file.types";

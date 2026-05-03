@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Menu, Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";

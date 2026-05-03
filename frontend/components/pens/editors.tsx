@@ -20,6 +20,7 @@ const languages = {
 };
 
 type Language = keyof typeof languages;
+
 const EditorWithHeader = ({
   language,
   code,
@@ -36,7 +37,7 @@ const EditorWithHeader = ({
   return (
     <div className="h-full flex flex-col">
       {!hideHeader && (
-        <header className="p-3 sticky top-0 flex items-center gap-2 z-10 bg-[#0a0e14]/80 backdrop-blur-xl border-b border-white/5">
+        <header className="sticky top-0 flex items-center gap-2 border-b border-border bg-background/80 p-3 backdrop-blur-xl">
           <Icon className="h-5 w-5" />
           <span className="text-sm font-medium tracking-wide">{label}</span>
         </header>
@@ -46,7 +47,6 @@ const EditorWithHeader = ({
           className="h-full z-0"
           language={language}
           onChange={onChange}
-          currentLanguage={language}
           code={code}
         />
       </div>
@@ -62,15 +62,15 @@ const EditorTags = ({
   onTabChange: (lang: Language) => void;
 }) => {
   return (
-    <div className="flex items-center gap-1 p-1.5 bg-[#0a0e14] border-b border-white/5">
+    <div className="flex items-center gap-1 border-b border-border bg-background p-1.5">
       {Object.entries(languages).map(([lang, { label, Icon }]) => (
         <button
           key={lang}
           onClick={() => onTabChange(lang as Language)}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-all duration-200 cursor-pointer flex-1 justify-center ${
+          className={`flex cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-1.5 transition-all duration-200 flex-1 ${
             lang === active
-              ? "bg-white/10 text-white shadow-sm"
-              : "text-muted-foreground hover:bg-white/5"
+              ? "bg-secondary text-foreground shadow-sm"
+              : "text-muted-foreground hover:bg-secondary/50"
           }`}
         >
           <Icon className="h-4 w-4" />
@@ -102,13 +102,13 @@ const DesktopEditors = ({
     <ResizablePanel defaultSize={50} minSize={60}>
       <EditorWithHeader language="html" code={html} onChange={setHtml} />
     </ResizablePanel>
-    <ResizableHandle withHandle className="bg-white/5" />
+    <ResizableHandle withHandle className="bg-border/50" />
     <ResizablePanel defaultSize={50}>
       <ResizablePanelGroup orientation="vertical">
         <ResizablePanel defaultSize={50} minSize={50}>
           <EditorWithHeader language="css" code={css} onChange={setCss} />
         </ResizablePanel>
-        <ResizableHandle withHandle className="bg-white/5" />
+        <ResizableHandle withHandle className="bg-border/50" />
         <ResizablePanel defaultSize={50} minSize={50}>
           <EditorWithHeader language="javascript" code={js} onChange={setJs} />
         </ResizablePanel>
@@ -209,10 +209,10 @@ export const PenEditor = () => {
   if (!mount) return <Loader />;
 
   return (
-    <div className="h-full flex flex-col overflow-hidden bg-[#0a0e14]">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       <ResizablePanelGroup
         orientation="vertical"
-        className="rounded-lg border border-white/5"
+        className="rounded-lg border border-border"
       >
         <ResizablePanel defaultSize={70} className="flex flex-col min-h-0">
           {isMobile ? (
@@ -238,7 +238,7 @@ export const PenEditor = () => {
           )}
         </ResizablePanel>
 
-        <ResizableHandle withHandle className="bg-white/5" />
+        <ResizableHandle withHandle className="bg-border/50" />
 
         <ResizablePanel defaultSize={30} maxSize={"60%"} minSize={50}>
           <iframe

@@ -1,14 +1,11 @@
 "use client";
-import { MergeView } from "@codemirror/merge";
-import { EditorState } from "@codemirror/state";
-import { basicSetup, EditorView } from "codemirror";
-import { useEffect, useRef, useState } from "react";
+import { Editor, type OnChange as OnMonacoChange } from "@monaco-editor/react";
+import { useTheme } from "next-themes";
+import { useState } from "react";
 
-import { ayuDark } from "@/components/playgroud/themes";
 import type { CodeEditorProps } from "@/lib/modules/playgournd/editor.types";
 import {
   getLanguageByPath,
-  getLanguageExtension,
   LANGUAGE_GROUPS,
 } from "@/lib/modules/playgournd/editor.utils";
 import { cn } from "@/lib/utils";
@@ -23,130 +20,41 @@ import {
   SelectValue,
 } from "../ui/select";
 
-const editorTheme = EditorView.theme({
-  "&": { height: "100%" },
-  ".cm-scroller": { overflow: "auto" },
-});
-
 export interface RawCodeEditorProps
   extends CodeEditorProps, Omit<React.HTMLProps<HTMLDivElement>, "onChange"> {
   diff?: boolean;
   originalCode?: string;
-  currentLanguage: string;
 }
 
-export function RawCodeEditor({
+export const RawCodeEditor = ({
   code,
   onChange,
-  diff,
-  originalCode,
-  currentLanguage,
   language,
-  ...props
-}: RawCodeEditorProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const viewRef = useRef<EditorView | null>(null);
-  const mergeViewRef = useRef<MergeView | null>(null);
-
-  // Re-create editor when language or diff mode changes
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const extensions = [
-      basicSetup,
-      getLanguageExtension(currentLanguage),
-      ayuDark,
-      editorTheme,
-    ];
-
-    if (diff) {
-      const mergeView = new MergeView({
-        parent: containerRef.current,
-        a: {
-          doc: originalCode ?? "",
-          extensions,
-        },
-        b: {
-          doc: code,
-          extensions: [
-            ...extensions,
-            EditorView.updateListener.of((update) => {
-              if (update.docChanged) {
-                onChange(update.state.doc.toString());
-              }
-            }),
-          ],
-        },
-        revertControls: "b-to-a",
-        highlightChanges: true,
-        gutter: true,
-      });
-      mergeViewRef.current = mergeView;
-
-      return () => {
-        mergeView.destroy();
-        mergeViewRef.current = null;
-      };
-    } else {
-      const view = new EditorView({
-        parent: containerRef.current,
-        state: EditorState.create({
-          doc: code,
-          extensions: [
-            ...extensions,
-            EditorView.updateListener.of((update) => {
-              if (update.docChanged) {
-                onChange(update.state.doc.toString());
-              }
-            }),
-          ],
-        }),
-      });
-      viewRef.current = view;
-
-      return () => {
-        view.destroy();
-        viewRef.current = null;
-      };
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentLanguage, diff]);
-
-  // Sync code changes to the normal editor
-  useEffect(() => {
-    if (diff) return;
-    const view = viewRef.current;
-    if (!view) return;
-    const current = view.state.doc.toString();
-    if (current !== code) {
-      view.dispatch({
-        changes: { from: 0, to: current.length, insert: code },
-      });
-    }
-  }, [code, diff]);
-
-  // Sync code changes to the right panel of diff view
-  useEffect(() => {
-    if (!diff) return;
-    const mergeView = mergeViewRef.current;
-    if (!mergeView) return;
-    const current = mergeView.b.state.doc.toString();
-    if (current !== code) {
-      mergeView.b.dispatch({
-        changes: { from: 0, to: current.length, insert: code },
-      });
-    }
-  }, [code, diff]);
-
+}: RawCodeEditorProps) => {
+  const { resolvedTheme } = useTheme();
+  const theme = resolvedTheme === "light" ? "light" : "vs-dark";
   return (
-    <div
-      {...props}
-      className={cn("flex-1 overflow-hidden bg-black", props.className)}
-    >
-      <div ref={containerRef} className="w-full h-full min-h-[65vh]" />
-    </div>
+    <Editor
+      theme={theme}
+      height="100%"
+      value={code}
+      onChange={onChange as OnMonacoChange}
+      options={{
+        autoIndent: "full",
+        minimap: { enabled: false },
+        "semanticHighlighting.enabled": true,
+        fontSize: 14,
+        tabSize: 2,
+        scrollBeyondLastLine: false,
+        wordWrap: "on",
+        autoClosingBrackets: "always",
+        autoClosingQuotes: "always",
+        formatOnPaste: true,
+      }}
+      language={language}
+    />
   );
-}
+};
 
 export interface EditorHeaderProps {
   path?: string;
@@ -231,8 +139,7 @@ export default function CodeEditor({
         onChange={onChange}
         diff={diff}
         originalCode={originalCode}
-        currentLanguage={currentLanguage}
-        language={language}
+        language={currentLanguage}
       />
     </div>
   );

@@ -5,7 +5,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
@@ -60,6 +59,7 @@ export function DataTable<TData, TValue>({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,

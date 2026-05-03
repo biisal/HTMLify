@@ -18,10 +18,12 @@ export default function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <DashboardSidebar variant="inset" />
-      <SidebarInset>
+      <DashboardSidebar />
+      <SidebarInset className="overflow-hidden">
         <DasshboardNavbar />
-        {children}
+        <main className="mx-auto flex w-full flex-1 flex-col p-2">
+          {children}
+        </main>
       </SidebarInset>
     </SidebarProvider>
   );
