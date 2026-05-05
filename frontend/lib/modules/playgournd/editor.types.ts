@@ -18,5 +18,6 @@ export type SupportedLanguage =
 export interface CodeEditorProps {
   code: string;
   language: string;
+  showSuggestion?: boolean;
   onChange: (code: string) => void;
 }

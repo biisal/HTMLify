@@ -1,4 +1,5 @@
 import { Code2, Globe, Layout, Settings } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
 
 import { RawCodeEditor } from "@/components/playgroud/code-editor";
 import { Button } from "@/components/ui/button";
@@ -22,10 +23,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useEditor } from "@/hooks/use-editor";
 
 interface EditorSettingsDrawerProps {
   activeLanguage: "html" | "css" | "javascript";
+}
+
+function AutoCompleteSwitch({
+  disableAutoComplete,
+  setDisableAutoComplete,
+  language,
+}: {
+  disableAutoComplete: boolean;
+  setDisableAutoComplete: (v: boolean) => void;
+  language: string;
+}) {
+  return (
+    <div className="flex items-center space-x-2">
+      <Switch
+        id={"disable-auto-complete-" + language}
+        checked={disableAutoComplete}
+        onCheckedChange={setDisableAutoComplete}
+      />
+      <Label htmlFor={"disable-auto-complete-" + language}>
+        Disable Auto Complete for {language}
+      </Label>
+    </div>
+  );
 }
 
 const HTMLSettings = () => {
@@ -36,6 +61,8 @@ const HTMLSettings = () => {
     setBodyClasses,
     htmlLang,
     setHtmlLang,
+    disableHtmlSuggetion,
+    setDisableHtmlSuggetion,
   } = useEditor();
 
   return (
@@ -102,25 +129,47 @@ const HTMLSettings = () => {
           />
         </div>
       </section>
+      <AutoCompleteSwitch
+        disableAutoComplete={disableHtmlSuggetion}
+        setDisableAutoComplete={setDisableHtmlSuggetion}
+        language="html"
+      />
     </div>
   );
 };
 
-const CSSSettings = () => (
-  <div className="flex flex-col gap-4 py-4">
-    <div className="flex items-center gap-2 text-sm font-semibold text-primary/80">
-      <span>CSS Configuration</span>
-    </div>
-  </div>
-);
+const CSSSettings = () => {
+  const { disableCssSuggetion, setDisableCssSuggetion } = useEditor();
 
-const JSSettings = () => (
-  <div className="flex flex-col gap-4 py-4">
-    <div className="flex items-center gap-2 text-sm font-semibold text-primary/80">
-      <span>JavaScript Configuration</span>
+  return (
+    <div className="flex flex-col gap-4 py-4">
+      <div className="flex items-center gap-2 text-sm font-semibold text-primary/80">
+        <span>CSS Configuration</span>
+      </div>
+      <AutoCompleteSwitch
+        disableAutoComplete={disableCssSuggetion}
+        setDisableAutoComplete={setDisableCssSuggetion}
+        language="Css"
+      />
     </div>
-  </div>
-);
+  );
+};
+const JSSettings = () => {
+  const { disableJsSuggetion, setDisableJsSuggetion } = useEditor();
+
+  return (
+    <div className="flex flex-col gap-4 py-4">
+      <div className="flex items-center gap-2 text-sm font-semibold text-primary/80">
+        <span>Js Configuration</span>
+      </div>
+      <AutoCompleteSwitch
+        disableAutoComplete={disableJsSuggetion}
+        setDisableAutoComplete={setDisableJsSuggetion}
+        language="Css"
+      />
+    </div>
+  );
+};
 
 const ActiveSettings = ({ activeLanguage }: { activeLanguage: string }) => {
   switch (activeLanguage) {

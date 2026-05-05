@@ -30,10 +30,26 @@ const EditorWithHeader = ({
   hideHeader?: boolean;
 }) => {
   const { Icon, label } = languages[language];
-  const { html, setHtml, css, setCss, js, setJs } = useEditor();
+  const {
+    html,
+    setHtml,
+    css,
+    setCss,
+    js,
+    setJs,
+    disableHtmlSuggetion: showHtmlSuggetion,
+    disableCssSuggetion: showCssSuggetion,
+    disableJsSuggetion: showJsSuggetion,
+  } = useEditor();
 
   const codeMap = { html, css, javascript: js };
   const setterMap = { html: setHtml, css: setCss, javascript: setJs };
+
+  const showSuggestion = {
+    html: showHtmlSuggetion,
+    css: showCssSuggetion,
+    javascript: showJsSuggetion,
+  }[language];
 
   return (
     <div className="h-full flex flex-col">
@@ -48,6 +64,7 @@ const EditorWithHeader = ({
       )}
       <div className="flex-1 overflow-hidden">
         <RawCodeEditor
+          showSuggestion={showSuggestion}
           className="h-full"
           language={language}
           onChange={setterMap[language]}

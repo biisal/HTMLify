@@ -30,6 +30,7 @@ export const RawCodeEditor = ({
   code,
   onChange,
   language,
+  showSuggestion,
   ...props
 }: RawCodeEditorProps) => {
   const { resolvedTheme } = useTheme();
@@ -42,6 +43,8 @@ export const RawCodeEditor = ({
       value={code}
       onChange={onChange as OnMonacoChange}
       options={{
+        quickSuggestions: !!!showSuggestion,
+        suggestOnTriggerCharacters: !!!showSuggestion,
         autoIndent: "full",
         minimap: { enabled: false },
         "semanticHighlighting.enabled": true,
