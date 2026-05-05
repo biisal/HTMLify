@@ -1,6 +1,6 @@
 "use client";
 
-import { ElementType, JSX, useEffect, useRef, useState } from "react";
+import { ElementType, useEffect, useRef, useState } from "react";
 
 import { CSS, HTML, JavaScript } from "@/components/icons";
 import { Loader } from "@/components/loader";
@@ -37,19 +37,45 @@ const EditorWithHeader = ({
     setCss,
     js,
     setJs,
-    disableHtmlSuggetion: showHtmlSuggetion,
-    disableCssSuggetion: showCssSuggetion,
-    disableJsSuggetion: showJsSuggetion,
+    enableHtmlSuggestion,
+    enableCssSuggestion,
+    enableJsSuggestion,
+    htmlFontSize,
+    htmlTabSize,
+    htmlInsertSpaces,
+    cssFontSize,
+    cssTabSize,
+    cssInsertSpaces,
+    jsFontSize,
+    jsTabSize,
+    jsInsertSpaces,
   } = useEditor();
 
   const codeMap = { html, css, javascript: js };
   const setterMap = { html: setHtml, css: setCss, javascript: setJs };
 
-  const showSuggestion = {
-    html: showHtmlSuggetion,
-    css: showCssSuggetion,
-    javascript: showJsSuggetion,
-  }[language];
+  const settingsMap = {
+    html: {
+      showSuggestion: enableHtmlSuggestion,
+      fontSize: htmlFontSize,
+      tabSize: htmlTabSize,
+      insertSpaces: htmlInsertSpaces,
+    },
+    css: {
+      showSuggestion: enableCssSuggestion,
+      fontSize: cssFontSize,
+      tabSize: cssTabSize,
+      insertSpaces: cssInsertSpaces,
+    },
+    javascript: {
+      showSuggestion: enableJsSuggestion,
+      fontSize: jsFontSize,
+      tabSize: jsTabSize,
+      insertSpaces: jsInsertSpaces,
+    },
+  };
+
+  const currentSettings = settingsMap[language];
 
   return (
     <div className="h-full flex flex-col">
@@ -64,7 +90,10 @@ const EditorWithHeader = ({
       )}
       <div className="flex-1 overflow-hidden">
         <RawCodeEditor
-          showSuggestion={showSuggestion}
+          showSuggestion={currentSettings.showSuggestion}
+          fontSize={currentSettings.fontSize}
+          tabSize={currentSettings.tabSize}
+          insertSpaces={currentSettings.insertSpaces}
           className="h-full"
           language={language}
           onChange={setterMap[language]}

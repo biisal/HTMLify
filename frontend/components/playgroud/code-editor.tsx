@@ -1,4 +1,5 @@
 "use client";
+
 import { Editor, type OnChange as OnMonacoChange } from "@monaco-editor/react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
@@ -31,6 +32,9 @@ export const RawCodeEditor = ({
   onChange,
   language,
   showSuggestion,
+  fontSize,
+  tabSize,
+  insertSpaces,
   ...props
 }: RawCodeEditorProps) => {
   const { resolvedTheme } = useTheme();
@@ -43,13 +47,15 @@ export const RawCodeEditor = ({
       value={code}
       onChange={onChange as OnMonacoChange}
       options={{
-        quickSuggestions: !!!showSuggestion,
-        suggestOnTriggerCharacters: !!!showSuggestion,
+        quickSuggestions: !!showSuggestion,
+        suggestOnTriggerCharacters: !!showSuggestion,
         autoIndent: "full",
         minimap: { enabled: false },
         "semanticHighlighting.enabled": true,
-        fontSize: 14,
-        tabSize: 2,
+        fontSize: fontSize || 14,
+        tabSize: tabSize || 2,
+        insertSpaces: insertSpaces !== undefined ? insertSpaces : true,
+
         scrollBeyondLastLine: false,
         wordWrap: "on",
         autoClosingBrackets: "always",

@@ -31,27 +31,113 @@ interface EditorSettingsDrawerProps {
 }
 
 function AutoCompleteSwitch({
-  disableAutoComplete,
-  setDisableAutoComplete,
+  enableAutoComplete,
+  setEnableAutoComplete,
   language,
 }: {
-  disableAutoComplete: boolean;
-  setDisableAutoComplete: (v: boolean) => void;
+  enableAutoComplete: boolean;
+  setEnableAutoComplete: (v: boolean) => void;
   language: string;
 }) {
   return (
     <div className="flex items-center space-x-2">
       <Switch
-        id={"disable-auto-complete-" + language}
-        checked={disableAutoComplete}
-        onCheckedChange={setDisableAutoComplete}
+        id={"enable-auto-complete-" + language}
+        checked={enableAutoComplete}
+        onCheckedChange={setEnableAutoComplete}
       />
-      <Label htmlFor={"disable-auto-complete-" + language}>
-        Disable Auto Complete for {language}
+      <Label htmlFor={"enable-auto-complete-" + language}>
+        Auto Complete for {language}
       </Label>
     </div>
   );
 }
+
+interface LanguageSettings {
+  fontSize: number;
+  setFontSize: (v: number) => void;
+  tabSize: number;
+  setTabSize: (v: number) => void;
+  insertSpaces: boolean;
+  setInsertSpaces: (v: boolean) => void;
+}
+
+const EditorPreferences = ({ language }: { language: string }) => {
+  const editor = useEditor();
+
+  const settingsMap: Record<string, LanguageSettings> = {
+    html: {
+      fontSize: editor.htmlFontSize,
+      setFontSize: editor.setHtmlFontSize,
+      tabSize: editor.htmlTabSize,
+      setTabSize: editor.setHtmlTabSize,
+      insertSpaces: editor.htmlInsertSpaces,
+      setInsertSpaces: editor.setHtmlInsertSpaces,
+    },
+    css: {
+      fontSize: editor.cssFontSize,
+      setFontSize: editor.setCssFontSize,
+      tabSize: editor.cssTabSize,
+      setTabSize: editor.setCssTabSize,
+      insertSpaces: editor.cssInsertSpaces,
+      setInsertSpaces: editor.setCssInsertSpaces,
+    },
+    javascript: {
+      fontSize: editor.jsFontSize,
+      setFontSize: editor.setJsFontSize,
+      tabSize: editor.jsTabSize,
+      setTabSize: editor.setJsTabSize,
+      insertSpaces: editor.jsInsertSpaces,
+      setInsertSpaces: editor.setJsInsertSpaces,
+    },
+  };
+
+  const current = settingsMap[language] || settingsMap.html;
+
+  return (
+    <section className="space-y-4 pt-4 border-t border-border/50">
+      <div className="flex items-center gap-2 text-sm font-semibold text-primary/80">
+        <span>Editor Preferences ({language.toUpperCase()})</span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label className="text-xs text-muted-foreground">Font Size</Label>
+          <Input
+            type="number"
+            value={current.fontSize}
+            onChange={(e) => current.setFontSize(Number(e.target.value))}
+            min={8}
+            max={32}
+            className="h-8"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label className="text-xs text-muted-foreground">Tab Size</Label>
+          <Input
+            type="number"
+            value={current.tabSize}
+            onChange={(e) => current.setTabSize(Number(e.target.value))}
+            min={1}
+            max={8}
+            className="h-8"
+          />
+        </div>
+      </div>
+
+      <div className="flex items-center space-x-2 pt-2">
+        <Switch
+          id={"insert-spaces-" + language}
+          checked={current.insertSpaces}
+          onCheckedChange={current.setInsertSpaces}
+        />
+        <Label htmlFor={"insert-spaces-" + language} className="text-xs">
+          Insert spaces instead of tabs
+        </Label>
+      </div>
+    </section>
+  );
+};
 
 const HTMLSettings = () => {
   const {
@@ -61,8 +147,8 @@ const HTMLSettings = () => {
     setBodyClasses,
     htmlLang,
     setHtmlLang,
-    disableHtmlSuggetion,
-    setDisableHtmlSuggetion,
+    enableHtmlSuggestion,
+    setEnableHtmlSuggestion,
   } = useEditor();
 
   return (
@@ -130,8 +216,8 @@ const HTMLSettings = () => {
         </div>
       </section>
       <AutoCompleteSwitch
-        disableAutoComplete={disableHtmlSuggetion}
-        setDisableAutoComplete={setDisableHtmlSuggetion}
+        enableAutoComplete={enableHtmlSuggestion}
+        setEnableAutoComplete={setEnableHtmlSuggestion}
         language="html"
       />
     </div>
@@ -139,7 +225,7 @@ const HTMLSettings = () => {
 };
 
 const CSSSettings = () => {
-  const { disableCssSuggetion, setDisableCssSuggetion } = useEditor();
+  const { enableCssSuggestion, setEnableCssSuggestion } = useEditor();
 
   return (
     <div className="flex flex-col gap-4 py-4">
@@ -147,15 +233,15 @@ const CSSSettings = () => {
         <span>CSS Configuration</span>
       </div>
       <AutoCompleteSwitch
-        disableAutoComplete={disableCssSuggetion}
-        setDisableAutoComplete={setDisableCssSuggetion}
+        enableAutoComplete={enableCssSuggestion}
+        setEnableAutoComplete={setEnableCssSuggestion}
         language="Css"
       />
     </div>
   );
 };
 const JSSettings = () => {
-  const { disableJsSuggetion, setDisableJsSuggetion } = useEditor();
+  const { enableJsSuggestion, setEnableJsSuggestion } = useEditor();
 
   return (
     <div className="flex flex-col gap-4 py-4">
@@ -163,25 +249,34 @@ const JSSettings = () => {
         <span>Js Configuration</span>
       </div>
       <AutoCompleteSwitch
-        disableAutoComplete={disableJsSuggetion}
-        setDisableAutoComplete={setDisableJsSuggetion}
-        language="Css"
+        enableAutoComplete={enableJsSuggestion}
+        setEnableAutoComplete={setEnableJsSuggestion}
+        language="Js"
       />
     </div>
   );
 };
 
 const ActiveSettings = ({ activeLanguage }: { activeLanguage: string }) => {
-  switch (activeLanguage) {
-    case "html":
-      return <HTMLSettings />;
-    case "css":
-      return <CSSSettings />;
-    case "javascript":
-      return <JSSettings />;
-    default:
-      return null;
-  }
+  const renderSpecificSettings = () => {
+    switch (activeLanguage) {
+      case "html":
+        return <HTMLSettings />;
+      case "css":
+        return <CSSSettings />;
+      case "javascript":
+        return <JSSettings />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+      {renderSpecificSettings()}
+      <EditorPreferences language={activeLanguage} />
+    </div>
+  );
 };
 
 export const EditorSettingsDrawer = ({
