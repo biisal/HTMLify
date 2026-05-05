@@ -3,7 +3,10 @@
 import React, { createContext, useContext, useState } from "react";
 
 import useDebounce from "@/hooks/use-debounce";
-import { UserChoosenSettings } from "@/lib/modules/playgournd/editor.types";
+import {
+  EditorContextType,
+  UserChoosenSettings,
+} from "@/lib/modules/playgournd/editor.types";
 
 const localSettingsKey = "userSettings";
 
@@ -24,58 +27,6 @@ const defaultSettings: UserChoosenSettings = {
   jsTabSize: 2,
   jsInsertSpaces: true,
 };
-export interface EditorContextType {
-  html: string;
-  setHtml: (v: string) => void;
-  css: string;
-  setCss: (v: string) => void;
-  js: string;
-  setJs: (v: string) => void;
-  headContent: string;
-  setHeadContent: (v: string) => void;
-  bodyClasses: string;
-  setBodyClasses: (v: string) => void;
-  htmlLang: string;
-  setHtmlLang: (v: string) => void;
-
-  enableHtmlSuggestion: boolean;
-  setEnableHtmlSuggestion: (v: boolean) => void;
-  enableCssSuggestion: boolean;
-  setEnableCssSuggestion: (v: boolean) => void;
-  enableJsSuggestion: boolean;
-  setEnableJsSuggestion: (v: boolean) => void;
-
-  getLocalChoosenSettings: () => UserChoosenSettings;
-  localSettingsKey: string;
-
-  htmlFontSize: number;
-  setHtmlFontSize: (v: number) => void;
-  htmlTabSize: number;
-  setHtmlTabSize: (v: number) => void;
-  htmlInsertSpaces: boolean;
-  setHtmlInsertSpaces: (v: boolean) => void;
-
-  cssFontSize: number;
-  setCssFontSize: (v: number) => void;
-  cssTabSize: number;
-  setCssTabSize: (v: number) => void;
-  cssInsertSpaces: boolean;
-  setCssInsertSpaces: (v: boolean) => void;
-
-  jsFontSize: number;
-  setJsFontSize: (v: number) => void;
-  jsTabSize: number;
-  setJsTabSize: (v: number) => void;
-  jsInsertSpaces: boolean;
-  setJsInsertSpaces: (v: boolean) => void;
-
-  debouncedHtml: string;
-  debouncedCss: string;
-  debouncedJs: string;
-  debouncedHead: string;
-  debouncedBodyClasses: string;
-}
-
 const EditorContext = createContext<EditorContextType | null>(null);
 
 function getLocalChoosenSettings() {
