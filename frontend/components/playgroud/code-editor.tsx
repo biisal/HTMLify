@@ -1,8 +1,13 @@
 "use client";
 
-import { Editor, type OnChange as OnMonacoChange } from "@monaco-editor/react";
+import {
+  Editor,
+  type OnChange as OnMonacoChange,
+  type OnMount,
+} from "@monaco-editor/react";
+import type * as Monaco from "monaco-editor";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { CodeEditorProps } from "@/lib/modules/playgournd/editor.types";
 import {
@@ -39,6 +44,29 @@ export const RawCodeEditor = ({
 }: RawCodeEditorProps) => {
   const { resolvedTheme } = useTheme();
   const theme = resolvedTheme === "light" ? "light" : "vs-dark";
+  const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
+
+  const handleMount: OnMount = (editor) => {
+    editorRef.current = editor;
+    const model = editor.getModel();
+    if (model) {
+      model.updateOptions({
+        tabSize: tabSize || 2,
+        insertSpaces: !!insertSpaces,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const model = editorRef.current?.getModel();
+    if (model) {
+      model.updateOptions({
+        tabSize: tabSize || 2,
+        insertSpaces: !!insertSpaces,
+      });
+    }
+  }, [tabSize, insertSpaces]);
+
   return (
     <Editor
       className={props.className}
@@ -46,6 +74,7 @@ export const RawCodeEditor = ({
       height="100%"
       value={code}
       onChange={onChange as OnMonacoChange}
+      onMount={handleMount}
       options={{
         quickSuggestions: !!showSuggestion,
         suggestOnTriggerCharacters: !!showSuggestion,
@@ -53,8 +82,7 @@ export const RawCodeEditor = ({
         minimap: { enabled: false },
         "semanticHighlighting.enabled": true,
         fontSize: fontSize || 14,
-        tabSize: tabSize || 2,
-        insertSpaces: insertSpaces !== undefined ? insertSpaces : true,
+        detectIndentation: false,
 
         scrollBeyondLastLine: false,
         wordWrap: "on",
@@ -128,6 +156,7 @@ export default function CodeEditor({
   diff,
   originalCode,
   path,
+  ...rest
 }: CodeEditorProps & {
   diff?: boolean;
   originalCode?: string;
@@ -146,6 +175,7 @@ export default function CodeEditor({
       />
 
       <RawCodeEditor
+        {...rest}
         code={code}
         onChange={onChange}
         diff={diff}
