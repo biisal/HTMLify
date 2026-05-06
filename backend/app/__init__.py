@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import uvicorn
 
+from app.config import SERVER_NAME
+
 from .api.internal.api import router as internal_router
 from .api.v1.api import router as v1_router
 
@@ -12,8 +14,9 @@ app.include_router(internal_router, prefix="/internal")
 app.include_router(v1_router, prefix="/v1")
 
 origins = [
-    "http://localhost:4000",
+    "http://localhost:3000",
     "http://localhost",
+    SERVER_NAME
 ]
 
 app.add_middleware(

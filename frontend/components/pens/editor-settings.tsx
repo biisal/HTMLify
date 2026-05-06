@@ -1,5 +1,4 @@
-import { Code2, Globe, Layout, Settings } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
+import { Settings } from "lucide-react";
 
 import { RawCodeEditor } from "@/components/playgroud/code-editor";
 import { Button } from "@/components/ui/button";
