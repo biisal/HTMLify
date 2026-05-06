@@ -20,12 +20,17 @@ const defaultSettings: UserChoosenSettings = {
   htmlFontSize: 14,
   htmlTabSize: 2,
   htmlInsertSpaces: true,
+  htmlShowLineNumbers: true,
+
   cssFontSize: 14,
   cssTabSize: 2,
   cssInsertSpaces: true,
+  cssShowLineNumbers: true,
+
   jsFontSize: 14,
   jsTabSize: 2,
   jsInsertSpaces: true,
+  jsShowLineNumbers: true,
 };
 const EditorContext = createContext<EditorContextType | null>(null);
 
@@ -72,15 +77,24 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
   const setHtmlTabSize = (v: number) => updateSetting("htmlTabSize", v);
   const setHtmlInsertSpaces = (v: boolean) =>
     updateSetting("htmlInsertSpaces", v);
+  const setHtmlShowLineNumbers = (v: boolean) => {
+    updateSetting("htmlShowLineNumbers", v);
+  };
 
   const setCssFontSize = (v: number) => updateSetting("cssFontSize", v);
   const setCssTabSize = (v: number) => updateSetting("cssTabSize", v);
   const setCssInsertSpaces = (v: boolean) =>
     updateSetting("cssInsertSpaces", v);
+  const setCssShowLineNumbers = (v: boolean) => {
+    updateSetting("cssShowLineNumbers", v);
+  };
 
   const setJsFontSize = (v: number) => updateSetting("jsFontSize", v);
   const setJsTabSize = (v: number) => updateSetting("jsTabSize", v);
   const setJsInsertSpaces = (v: boolean) => updateSetting("jsInsertSpaces", v);
+  const setJsShowLineNumbers = (v: boolean) => {
+    updateSetting("jsShowLineNumbers", v);
+  };
 
   const debouncedSettings = useDebounce(settings, 1000);
 
@@ -100,13 +114,20 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
     htmlFontSize,
     htmlTabSize,
     htmlInsertSpaces,
+    htmlShowLineNumbers,
+
     cssFontSize,
     cssTabSize,
     cssInsertSpaces,
+    cssShowLineNumbers,
+
     jsFontSize,
     jsTabSize,
     jsInsertSpaces,
+    jsShowLineNumbers,
   } = settings;
+
+  console.log({ htmlShowLineNumbers });
 
   const debouncedHtml = useDebounce(html, 500);
   const debouncedCss = useDebounce(css, 500);
@@ -146,6 +167,8 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
         setHtmlTabSize,
         htmlInsertSpaces,
         setHtmlInsertSpaces,
+        htmlShowLineNumbers,
+        setHtmlShowLineNumbers,
 
         cssFontSize,
         setCssFontSize,
@@ -153,6 +176,8 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
         setCssTabSize,
         cssInsertSpaces,
         setCssInsertSpaces,
+        cssShowLineNumbers,
+        setCssShowLineNumbers,
 
         jsFontSize,
         setJsFontSize,
@@ -160,6 +185,8 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
         setJsTabSize,
         jsInsertSpaces,
         setJsInsertSpaces,
+        jsShowLineNumbers,
+        setJsShowLineNumbers,
 
         debouncedHtml,
         debouncedCss,

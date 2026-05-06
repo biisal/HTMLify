@@ -40,6 +40,7 @@ export const RawCodeEditor = ({
   fontSize,
   tabSize,
   insertSpaces,
+  showLineNumbers,
   ...props
 }: RawCodeEditorProps) => {
   const { resolvedTheme } = useTheme();
@@ -89,6 +90,7 @@ export const RawCodeEditor = ({
         autoClosingBrackets: "always",
         autoClosingQuotes: "always",
         formatOnPaste: true,
+        lineNumbers: showLineNumbers ? "on" : "off",
       }}
       language={language}
     />

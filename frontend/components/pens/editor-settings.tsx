@@ -59,6 +59,8 @@ interface LanguageSettings {
   setTabSize: (v: number) => void;
   insertSpaces: boolean;
   setInsertSpaces: (v: boolean) => void;
+  showLineNumbers: boolean;
+  setShowLineNumbers: (v: boolean) => void;
 }
 
 const EditorPreferences = ({ language }: { language: string }) => {
@@ -72,6 +74,8 @@ const EditorPreferences = ({ language }: { language: string }) => {
       setTabSize: editor.setHtmlTabSize,
       insertSpaces: editor.htmlInsertSpaces,
       setInsertSpaces: editor.setHtmlInsertSpaces,
+      showLineNumbers: editor.htmlShowLineNumbers,
+      setShowLineNumbers: editor.setHtmlShowLineNumbers,
     },
     css: {
       fontSize: editor.cssFontSize,
@@ -80,6 +84,8 @@ const EditorPreferences = ({ language }: { language: string }) => {
       setTabSize: editor.setCssTabSize,
       insertSpaces: editor.cssInsertSpaces,
       setInsertSpaces: editor.setCssInsertSpaces,
+      showLineNumbers: editor.cssShowLineNumbers,
+      setShowLineNumbers: editor.setCssShowLineNumbers,
     },
     javascript: {
       fontSize: editor.jsFontSize,
@@ -88,6 +94,8 @@ const EditorPreferences = ({ language }: { language: string }) => {
       setTabSize: editor.setJsTabSize,
       insertSpaces: editor.jsInsertSpaces,
       setInsertSpaces: editor.setJsInsertSpaces,
+      showLineNumbers: editor.jsShowLineNumbers,
+      setShowLineNumbers: editor.setJsShowLineNumbers,
     },
   };
 
@@ -132,6 +140,16 @@ const EditorPreferences = ({ language }: { language: string }) => {
         />
         <Label htmlFor={"insert-spaces-" + language} className="text-xs">
           Insert spaces instead of tabs
+        </Label>
+      </div>
+      <div className="flex items-center space-x-2 pt-2">
+        <Switch
+          id={"showline-numbers-" + language}
+          checked={current.showLineNumbers}
+          onCheckedChange={current.setShowLineNumbers}
+        />
+        <Label htmlFor={"showline-numbers-" + language} className="text-xs">
+          Show line numbers
         </Label>
       </div>
     </section>
