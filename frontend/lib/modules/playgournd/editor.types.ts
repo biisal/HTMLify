@@ -23,6 +23,7 @@ export interface CodeEditorProps {
   tabSize?: number;
   insertSpaces?: boolean;
   showLineNumbers?: boolean;
+  autoIndent?: boolean;
   onChange: (code: string) => void;
 }
 
@@ -37,14 +38,17 @@ export interface UserChoosenSettings {
   htmlTabSize: number;
   htmlInsertSpaces: boolean;
   htmlShowLineNumbers: boolean;
+  htmlAutoIndent: boolean;
   cssFontSize: number;
   cssTabSize: number;
   cssInsertSpaces: boolean;
   cssShowLineNumbers: boolean;
+  cssAutoIndent: boolean;
   jsFontSize: number;
   jsTabSize: number;
   jsInsertSpaces: boolean;
   jsShowLineNumbers: boolean;
+  jsAutoIndent: boolean;
 }
 
 export interface EditorContextType {
@@ -79,6 +83,8 @@ export interface EditorContextType {
   setHtmlInsertSpaces: (v: boolean) => void;
   htmlShowLineNumbers: boolean;
   setHtmlShowLineNumbers: (v: boolean) => void;
+  htmlAutoIndent: boolean;
+  setHtmlAutoIndent: (v: boolean) => void;
 
   cssFontSize: number;
   setCssFontSize: (v: number) => void;
@@ -88,6 +94,8 @@ export interface EditorContextType {
   setCssInsertSpaces: (v: boolean) => void;
   cssShowLineNumbers: boolean;
   setCssShowLineNumbers: (v: boolean) => void;
+  cssAutoIndent: boolean;
+  setCssAutoIndent: (v: boolean) => void;
 
   jsFontSize: number;
   setJsFontSize: (v: number) => void;
@@ -97,6 +105,8 @@ export interface EditorContextType {
   setJsInsertSpaces: (v: boolean) => void;
   jsShowLineNumbers: boolean;
   setJsShowLineNumbers: (v: boolean) => void;
+  jsAutoIndent: boolean;
+  setJsAutoIndent: (v: boolean) => void;
 
   debouncedHtml: string;
   debouncedCss: string;

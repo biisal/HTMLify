@@ -44,16 +44,19 @@ const EditorWithHeader = ({
     htmlTabSize,
     htmlInsertSpaces,
     htmlShowLineNumbers,
+    htmlAutoIndent,
 
     cssFontSize,
     cssTabSize,
     cssInsertSpaces,
     cssShowLineNumbers,
+    cssAutoIndent,
 
     jsFontSize,
     jsTabSize,
     jsInsertSpaces,
     jsShowLineNumbers,
+    jsAutoIndent,
   } = useEditor();
 
   const codeMap = { html, css, javascript: js };
@@ -66,6 +69,7 @@ const EditorWithHeader = ({
       tabSize: htmlTabSize,
       insertSpaces: htmlInsertSpaces,
       showLineNumbers: htmlShowLineNumbers,
+      autoIndent: htmlAutoIndent,
     },
     css: {
       showSuggestion: enableCssSuggestion,
@@ -73,6 +77,7 @@ const EditorWithHeader = ({
       tabSize: cssTabSize,
       insertSpaces: cssInsertSpaces,
       showLineNumbers: cssShowLineNumbers,
+      autoIndent: cssAutoIndent,
     },
     javascript: {
       showSuggestion: enableJsSuggestion,
@@ -80,6 +85,7 @@ const EditorWithHeader = ({
       tabSize: jsTabSize,
       insertSpaces: jsInsertSpaces,
       showLineNumbers: jsShowLineNumbers,
+      autoIndent: jsAutoIndent,
     },
   };
 
@@ -107,6 +113,7 @@ const EditorWithHeader = ({
           onChange={setterMap[language]}
           code={codeMap[language]}
           showLineNumbers={currentSettings.showLineNumbers}
+          autoIndent={currentSettings.autoIndent}
         />
       </div>
     </div>

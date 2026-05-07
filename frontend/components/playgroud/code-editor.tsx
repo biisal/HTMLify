@@ -41,6 +41,7 @@ export const RawCodeEditor = ({
   tabSize,
   insertSpaces,
   showLineNumbers,
+  autoIndent,
   ...props
 }: RawCodeEditorProps) => {
   const { resolvedTheme } = useTheme();
@@ -59,17 +60,29 @@ export const RawCodeEditor = ({
   };
 
   useEffect(() => {
-    const model = editorRef.current?.getModel();
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    editor.updateOptions({
+      autoIndent: autoIndent ? "full" : "none",
+    });
+
+    const model = editor.getModel();
     if (model) {
+      editor.setModel(null);
+      editor.setModel(model);
+
       model.updateOptions({
         tabSize: tabSize || 2,
         insertSpaces: !!insertSpaces,
       });
     }
-  }, [tabSize, insertSpaces]);
+    editor.focus();
+  }, [autoIndent, tabSize, insertSpaces]);
 
   return (
     <Editor
+      // key={`${language}-${autoIndent}`}
       className={props.className}
       theme={theme}
       height="100%"
@@ -79,7 +92,7 @@ export const RawCodeEditor = ({
       options={{
         quickSuggestions: !!showSuggestion,
         suggestOnTriggerCharacters: !!showSuggestion,
-        autoIndent: "full",
+        autoIndent: autoIndent ? "full" : "none",
         minimap: { enabled: false },
         "semanticHighlighting.enabled": true,
         fontSize: fontSize || 14,

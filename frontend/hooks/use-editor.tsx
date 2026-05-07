@@ -21,16 +21,19 @@ const defaultSettings: UserChoosenSettings = {
   htmlTabSize: 2,
   htmlInsertSpaces: true,
   htmlShowLineNumbers: true,
+  htmlAutoIndent: true,
 
   cssFontSize: 14,
   cssTabSize: 2,
   cssInsertSpaces: true,
   cssShowLineNumbers: true,
+  cssAutoIndent: true,
 
   jsFontSize: 14,
   jsTabSize: 2,
   jsInsertSpaces: true,
   jsShowLineNumbers: true,
+  jsAutoIndent: true,
 };
 const EditorContext = createContext<EditorContextType | null>(null);
 
@@ -80,6 +83,9 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
   const setHtmlShowLineNumbers = (v: boolean) => {
     updateSetting("htmlShowLineNumbers", v);
   };
+  const setHtmlAutoIndent = (v: boolean) => {
+    updateSetting("htmlAutoIndent", v);
+  };
 
   const setCssFontSize = (v: number) => updateSetting("cssFontSize", v);
   const setCssTabSize = (v: number) => updateSetting("cssTabSize", v);
@@ -88,12 +94,18 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
   const setCssShowLineNumbers = (v: boolean) => {
     updateSetting("cssShowLineNumbers", v);
   };
+  const setCssAutoIndent = (v: boolean) => {
+    updateSetting("cssAutoIndent", v);
+  };
 
   const setJsFontSize = (v: number) => updateSetting("jsFontSize", v);
   const setJsTabSize = (v: number) => updateSetting("jsTabSize", v);
   const setJsInsertSpaces = (v: boolean) => updateSetting("jsInsertSpaces", v);
   const setJsShowLineNumbers = (v: boolean) => {
     updateSetting("jsShowLineNumbers", v);
+  };
+  const setJsAutoIndent = (v: boolean) => {
+    updateSetting("jsAutoIndent", v);
   };
 
   const debouncedSettings = useDebounce(settings, 1000);
@@ -115,19 +127,20 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
     htmlTabSize,
     htmlInsertSpaces,
     htmlShowLineNumbers,
+    htmlAutoIndent,
 
     cssFontSize,
     cssTabSize,
     cssInsertSpaces,
     cssShowLineNumbers,
+    cssAutoIndent,
 
     jsFontSize,
     jsTabSize,
     jsInsertSpaces,
     jsShowLineNumbers,
+    jsAutoIndent,
   } = settings;
-
-  console.log({ htmlShowLineNumbers });
 
   const debouncedHtml = useDebounce(html, 500);
   const debouncedCss = useDebounce(css, 500);
@@ -169,6 +182,8 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
         setHtmlInsertSpaces,
         htmlShowLineNumbers,
         setHtmlShowLineNumbers,
+        htmlAutoIndent,
+        setHtmlAutoIndent,
 
         cssFontSize,
         setCssFontSize,
@@ -178,6 +193,8 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
         setCssInsertSpaces,
         cssShowLineNumbers,
         setCssShowLineNumbers,
+        cssAutoIndent,
+        setCssAutoIndent,
 
         jsFontSize,
         setJsFontSize,
@@ -187,6 +204,8 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
         setJsInsertSpaces,
         jsShowLineNumbers,
         setJsShowLineNumbers,
+        jsAutoIndent,
+        setJsAutoIndent,
 
         debouncedHtml,
         debouncedCss,

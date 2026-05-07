@@ -61,6 +61,8 @@ interface LanguageSettings {
   setInsertSpaces: (v: boolean) => void;
   showLineNumbers: boolean;
   setShowLineNumbers: (v: boolean) => void;
+  autoIndent: boolean;
+  setAutoIndent: (v: boolean) => void;
 }
 
 const EditorPreferences = ({ language }: { language: string }) => {
@@ -76,6 +78,8 @@ const EditorPreferences = ({ language }: { language: string }) => {
       setInsertSpaces: editor.setHtmlInsertSpaces,
       showLineNumbers: editor.htmlShowLineNumbers,
       setShowLineNumbers: editor.setHtmlShowLineNumbers,
+      autoIndent: editor.htmlAutoIndent,
+      setAutoIndent: editor.setHtmlAutoIndent,
     },
     css: {
       fontSize: editor.cssFontSize,
@@ -86,6 +90,8 @@ const EditorPreferences = ({ language }: { language: string }) => {
       setInsertSpaces: editor.setCssInsertSpaces,
       showLineNumbers: editor.cssShowLineNumbers,
       setShowLineNumbers: editor.setCssShowLineNumbers,
+      autoIndent: editor.cssAutoIndent,
+      setAutoIndent: editor.setCssAutoIndent,
     },
     javascript: {
       fontSize: editor.jsFontSize,
@@ -96,6 +102,8 @@ const EditorPreferences = ({ language }: { language: string }) => {
       setInsertSpaces: editor.setJsInsertSpaces,
       showLineNumbers: editor.jsShowLineNumbers,
       setShowLineNumbers: editor.setJsShowLineNumbers,
+      autoIndent: editor.jsAutoIndent,
+      setAutoIndent: editor.setJsAutoIndent,
     },
   };
 
@@ -150,6 +158,16 @@ const EditorPreferences = ({ language }: { language: string }) => {
         />
         <Label htmlFor={"showline-numbers-" + language} className="text-xs">
           Show line numbers
+        </Label>
+      </div>
+      <div className="flex items-center space-x-2 pt-2">
+        <Switch
+          id={"auto-indent-" + language}
+          checked={current.autoIndent}
+          onCheckedChange={current.setAutoIndent}
+        />
+        <Label htmlFor={"auto-indent-" + language} className="text-xs">
+          Auto indent
         </Label>
       </div>
     </section>
@@ -310,7 +328,7 @@ export const EditorSettingsDrawer = ({
           <Settings className="h-4 w-4 text-muted-foreground" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="md:min-w-125 sm:max-w-[90%] outline-none">
+      <DrawerContent className="md:min-w-125 flex flex-col  sm:max-w-[90%] outline-none">
         <DrawerHeader className="border-b bg-muted/10 pb-6">
           <DrawerTitle className="">
             {activeLanguage.toUpperCase()} Settings
@@ -320,7 +338,7 @@ export const EditorSettingsDrawer = ({
           </DrawerDescription>
         </DrawerHeader>
 
-        <ScrollArea className="flex-1 px-6">
+        <ScrollArea className="flex-1 px-6 pb-6 overflow-y-auto">
           <ActiveSettings activeLanguage={activeLanguage} />
         </ScrollArea>
 
