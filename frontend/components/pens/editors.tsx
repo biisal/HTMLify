@@ -1,11 +1,17 @@
 "use client";
 
+import { Eye, PenLine, Plus, Save } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ElementType, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 import { CSS, HTML, JavaScript } from "@/components/icons";
 import { Loader } from "@/components/loader";
 import { EditorSettingsDrawer } from "@/components/pens/editor-settings";
 import { RawCodeEditor } from "@/components/playgroud/code-editor";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -13,6 +19,9 @@ import {
 } from "@/components/ui/resizable";
 import { EditorProvider, useEditor } from "@/hooks/use-editor";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { createPen, updatePen } from "@/lib/modules/pen/pen.api";
+import { PenResponse } from "@/lib/modules/pen/pen.schema";
+import { formatHtmlContent } from "@/lib/modules/pen/pen.utils";
 
 const languages: Record<Language, { label: string; Icon: ElementType }> = {
   html: { label: "HTML", Icon: HTML },
@@ -94,7 +103,7 @@ const EditorWithHeader = ({
   return (
     <div className="h-full flex flex-col">
       {!hideHeader && (
-        <header className="sticky z-0 top-0 flex items-center justify-between border-b border-border bg-background/80 p-3 backdrop-blur-xl">
+        <header className="flex items-center justify-between border-b border-border bg-background/80 px-3 py-1 backdrop-blur-xl">
           <div className="flex items-center gap-2">
             <Icon className="h-5 w-5" />
             <span className="text-sm font-medium tracking-wide">{label}</span>
@@ -102,7 +111,7 @@ const EditorWithHeader = ({
           <EditorSettingsDrawer activeLanguage={language} />
         </header>
       )}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1">
         <RawCodeEditor
           showSuggestion={currentSettings.showSuggestion}
           fontSize={currentSettings.fontSize}
@@ -197,7 +206,7 @@ const MobileEditors = ({
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full">
       <EditorTags active={activeTab} onTabChange={setActiveTab} />
       <div className="flex-1 min-h-0 relative">{renderEditor(activeTab)}</div>
     </div>
@@ -209,6 +218,7 @@ const PenEditorContent = () => {
     html,
     css,
     js,
+    headContent,
     debouncedHtml,
     debouncedCss,
     debouncedJs,
@@ -224,18 +234,8 @@ const PenEditorContent = () => {
 
   useEffect(() => {
     if (!iframeRef.current) return;
-    iframeRef.current.srcdoc = `
-      <html>
-        <head>
-          <style>${css}</style>
-        </head>
-        <body>
-          ${html}
-          <script>${js}</script>
-        </body>
-      </html>
-    `;
-  }, [html, css, js]);
+    iframeRef.current.srcdoc = formatHtmlContent(html, headContent, css, js);
+  }, [html, headContent, css, js]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -285,9 +285,100 @@ const PenEditorContent = () => {
   );
 };
 
-export const PenEditor = () => {
+const PenForm = ({ onNew }: { onNew: () => void }) => {
+  const { setPen, pen, html, css, js, headContent } = useEditor();
+  const [title, setTitle] = useState(pen?.title || "");
+  const router = useRouter();
+
+  const handleUpdate = async (id: string) => {
+    if (!id) {
+      toast.error("Something went wrong! No pen id found");
+      return;
+    }
+    const { data, error } = await updatePen({
+      id: id,
+      title,
+      head_content: headContent,
+      body_content: html,
+      css_content: css,
+      js_content: js,
+    });
+    if (error || !data) {
+      toast.error(error || "Failed to update pen");
+      return;
+    }
+    toast.success("Pen updated successfully");
+  };
+
+  const handleSubmit = async () => {
+    const { data, error } = await createPen(title);
+    if (error || !data) {
+      toast.error(error || "Failed to create pen");
+      return;
+    }
+    setPen(data);
+    await handleUpdate(data.id);
+    toast.success("Pen created successfully");
+  };
+
+  if (pen?.id) {
+    return (
+      <div className="pb-1 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <PenLine className="w-3.5 h-3.5" />
+          <span className="font-medium text-foreground">{pen.title}</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => handleUpdate(pen.id)}
+          >
+            <Save className="w-3.5 h-3.5 mr-1.5" />
+            Save
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              onNew();
+              router.push("/dashboard/pens/edit");
+            }}
+          >
+            <Plus className="w-3.5 h-3.5" />
+            New
+          </Button>
+          <Button size="sm" variant="ghost" asChild>
+            <Link href={`/pen/${pen.id}`} target="_blank">
+              <Eye className="w-3.5 h-3.5" />
+              View
+            </Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
   return (
-    <EditorProvider>
+    <div className="pb-1 flex items-center justify-end gap-2">
+      <Input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Enter Pen Name"
+        className="max-w-sm"
+      />
+      <Button onClick={handleSubmit} size="sm">
+        Save
+      </Button>
+    </div>
+  );
+};
+
+export const PenEditor = ({ data }: { data: PenResponse | null }) => {
+  const [resetKey, setResetKey] = useState(0);
+
+  return (
+    <EditorProvider key={`${data?.id ?? "new"}-${resetKey}`} penData={data}>
+      <PenForm onNew={() => setResetKey((prev) => prev + 1)} />
       <PenEditorContent />
     </EditorProvider>
   );

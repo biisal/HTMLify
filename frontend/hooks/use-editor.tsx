@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState } from "react";
 
 import useDebounce from "@/hooks/use-debounce";
+import { PenResponse } from "@/lib/modules/pen/pen.schema";
 import {
   EditorContextType,
   UserChoosenSettings,
@@ -50,10 +51,17 @@ function getLocalChoosenSettings() {
   return defaultSettings;
 }
 
-export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
-  const [html, setHtml] = useState("");
-  const [css, setCss] = useState("");
-  const [js, setJs] = useState("");
+export const EditorProvider = ({
+  penData,
+  children,
+}: {
+  penData: PenResponse | null;
+  children: React.ReactNode;
+}) => {
+  const [html, setHtml] = useState(penData?.body_content || "");
+  const [css, setCss] = useState(penData?.css_content || "");
+  const [js, setJs] = useState(penData?.js_content || "");
+  const [pen, setPen] = useState<PenResponse | null>(penData);
 
   const [settings, setSettings] = useState<UserChoosenSettings>(() =>
     getLocalChoosenSettings(),
@@ -151,6 +159,9 @@ export const EditorProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <EditorContext.Provider
       value={{
+        pen,
+        setPen: setPen,
+
         html,
         setHtml,
         css,

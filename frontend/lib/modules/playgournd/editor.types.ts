@@ -1,3 +1,5 @@
+import { PenResponse } from "@/lib/modules/pen/pen.schema";
+
 export type SupportedLanguage =
   | "javascript"
   | "js"
@@ -52,6 +54,8 @@ export interface UserChoosenSettings {
 }
 
 export interface EditorContextType {
+  pen: PenResponse | null;
+  setPen: (v: PenResponse) => void;
   html: string;
   setHtml: (v: string) => void;
   css: string;

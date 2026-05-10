@@ -103,7 +103,8 @@ export const RawCodeEditor = ({
         autoClosingBrackets: "always",
         autoClosingQuotes: "always",
         formatOnPaste: true,
-        lineNumbers: showLineNumbers ? "on" : "off",
+        lineNumbers:
+          showLineNumbers === undefined ? "on" : showLineNumbers ? "on" : "off",
       }}
       language={language}
     />

@@ -1,9 +1,25 @@
 import { PenEditor } from "@/components/pens/editors";
+import { getPenById } from "@/lib/modules/pen/pen.api";
+import { PenResponse } from "@/lib/modules/pen/pen.schema";
 
-const page = () => {
+const page = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ id: string }>;
+}) => {
+  const { id } = await searchParams;
+  let penRes: PenResponse | null = null;
+  if (id) {
+    const { data, error } = await getPenById(id);
+    if (error || !data) {
+      console.error(error);
+    }
+    console.log(data);
+    penRes = data;
+  }
   return (
     <div className="w-full h-full">
-      <PenEditor />
+      <PenEditor data={penRes} />
     </div>
   );
 };

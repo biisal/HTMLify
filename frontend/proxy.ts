@@ -7,17 +7,20 @@ import {
   PROTECTED_ROUTES,
 } from "@/lib/modules/auth/auth.proxy";
 import { serverFile } from "@/lib/modules/file/file.proxy";
+import { serverPenContent } from "@/lib/modules/pen/pen.proxy";
 import { excludePaths } from "@/lib/modules/proxy/proxy.config";
 import { serveShortlink } from "@/lib/modules/shortlink/shortlink.proxy";
 import { serveTmpFile } from "@/lib/modules/tmp/tmp.proxy";
 
 const shortnerPaths = ["/r"];
 const tmpPaths = ["/tmp"];
+const penPaths = ["/pen"];
 const matchRoute = (route: string, routes: string[]) =>
   routes.some((r) => route === r || route.startsWith(r + "/"));
 
 const isTmp = (pathname: string) => matchRoute(pathname, tmpPaths);
 const isShortLink = (pathname: string) => matchRoute(pathname, shortnerPaths);
+const isPen = (pathname: string) => matchRoute(pathname, penPaths);
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -26,6 +29,13 @@ export async function proxy(request: NextRequest) {
     const redirect = await serveShortlink(pathname);
     if (redirect) {
       return redirect;
+    }
+  }
+
+  if (isPen(pathname)) {
+    const id = pathname.split("/")[2];
+    if (id) {
+      return await serverPenContent(id);
     }
   }
 

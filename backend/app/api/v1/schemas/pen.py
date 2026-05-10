@@ -43,7 +43,7 @@ class PenRead(BaseModel):
         if show_content:
             pr.head_content = pen.head_blob.get_str()
             pr.body_content = pen.body_blob.get_str()
-            pr.css_content = pen.body_blob.get_str()
+            pr.css_content = pen.css_blob.get_str()
             pr.js_content = pen.js_blob.get_str()
         return pr
 
