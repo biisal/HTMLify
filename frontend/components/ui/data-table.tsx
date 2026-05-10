@@ -14,16 +14,8 @@ import { Search, X } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
+import { AppPagination } from "@/components/app-pagination";
 import { Input } from "@/components/ui/input";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -56,9 +48,6 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [globalFilter, setGlobalFilter] = useState("");
 
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
@@ -83,12 +72,6 @@ export function DataTable<TData, TValue>({
       },
     },
   });
-
-  const createPageURL = (pageNumber: string | number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", pageNumber.toString());
-    return `${pathname}?${params.toString()}`;
-  };
 
   const currentPage = pageIndex + 1;
 
@@ -174,63 +157,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      {pageCount && pageCount > 1 && (
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href={currentPage > 1 ? createPageURL(currentPage - 1) : "#"}
-                className={
-                  currentPage <= 1
-                    ? "pointer-events-none opacity-50"
-                    : "cursor-pointer"
-                }
-              />
-            </PaginationItem>
-
-            {Array.from({ length: pageCount }, (_, i) => i + 1).map((page) => {
-              // Only show first, last, and pages around current page
-              if (
-                page === 1 ||
-                page === pageCount ||
-                (page >= currentPage - 1 && page <= currentPage + 1)
-              ) {
-                return (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      href={createPageURL(page)}
-                      isActive={currentPage === page}
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                );
-              }
-              if (page === 2 || page === pageCount - 1) {
-                return (
-                  <PaginationItem key={page}>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                );
-              }
-              return null;
-            })}
-
-            <PaginationItem>
-              <PaginationNext
-                href={
-                  currentPage < pageCount ? createPageURL(currentPage + 1) : "#"
-                }
-                className={
-                  currentPage >= pageCount
-                    ? "pointer-events-none opacity-50"
-                    : "cursor-pointer"
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )}
+      <AppPagination pageCount={pageCount!} currentPage={currentPage} />
     </div>
   );
 }

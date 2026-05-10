@@ -60,7 +60,7 @@ const navPen = [
   },
   {
     title: "Pens",
-    url: "#",
+    url: "/dashboard/pens",
     icon: PenTool,
   },
   {

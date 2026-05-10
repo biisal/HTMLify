@@ -1,6 +1,7 @@
 import { env } from "@/lib/env";
 import { APICall } from "@/lib/fetch/api";
 import { PenResponse } from "@/lib/modules/pen/pen.schema";
+import { base64ToString, stringToBase64 } from "@/lib/modules/pen/pen.utils";
 
 async function createPen(title: string) {
   const { response, error } = await APICall(
@@ -31,12 +32,6 @@ interface UpdatePenParams {
   js_content: string;
 }
 
-function stringToBase64(str: string) {
-  return Buffer.from(str).toString("base64");
-}
-function base64ToString(base64: string) {
-  return Buffer.from(base64, "base64").toString("utf-8");
-}
 async function updatePen(updatePenParams: UpdatePenParams) {
   const { id, ...rest } = updatePenParams;
   console.log({ id, update: rest });
@@ -86,4 +81,38 @@ async function getPenById(id: string) {
   };
 }
 
-export { createPen, getPenById, updatePen };
+async function getPens() {
+  const { response, error } = await APICall(
+    `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/pens`,
+  );
+  if (error || !response) {
+    return { data: null, error: error || "Failed to get pens" };
+  }
+  return {
+    data: (await response.json()) as PenResponse[],
+    error: null,
+  };
+}
+
+async function deletePen(
+  id: string,
+): Promise<{ success: boolean; error: string | null }> {
+  const { response, error } = await APICall(
+    `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/pens/${id}`,
+    {
+      method: "DELETE",
+    },
+  );
+  if (error || !response) {
+    return { success: false, error: error || "Failed to delete pen" };
+  }
+  if (response.status !== 204) {
+    return { success: false, error: "Failed to delete pen" };
+  }
+  return {
+    success: true,
+    error: null,
+  };
+}
+
+export { createPen, deletePen, getPenById, getPens, updatePen };
