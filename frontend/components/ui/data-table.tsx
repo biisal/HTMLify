@@ -11,7 +11,6 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 import { Search, X } from "lucide-react";
-import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { AppPagination } from "@/components/app-pagination";

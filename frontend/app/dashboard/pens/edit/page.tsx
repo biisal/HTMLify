@@ -14,7 +14,6 @@ const page = async ({
     if (error || !data) {
       console.error(error);
     }
-    console.log(data);
     penRes = data;
   }
   return (

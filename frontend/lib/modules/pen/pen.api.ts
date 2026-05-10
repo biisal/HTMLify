@@ -34,7 +34,6 @@ interface UpdatePenParams {
 
 async function updatePen(updatePenParams: UpdatePenParams) {
   const { id, ...rest } = updatePenParams;
-  console.log({ id, update: rest });
 
   rest.body_content = stringToBase64(rest.body_content);
   rest.head_content = stringToBase64(rest.head_content);
@@ -68,7 +67,6 @@ async function getPenById(id: string) {
     return { data: null, error: error || "Failed to get pen" };
   }
   const data = (await response.json()) as PenResponse;
-  console.log({ raw: data });
 
   data.head_content = base64ToString(data.head_content);
   data.body_content = base64ToString(data.body_content);

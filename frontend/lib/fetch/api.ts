@@ -99,7 +99,6 @@ export async function APICall(
         refreshedToken: lastRefreshedToken,
       };
     } else {
-      console.log("this is client");
       let response = await fetch(url, {
         credentials: "include",
         ...options,
