@@ -15,9 +15,6 @@ const defaultSettings: UserChoosenSettings = {
   enableHtmlSuggestion: true,
   enableCssSuggestion: true,
   enableJsSuggestion: true,
-  htmlLang: "en",
-  headContent: "",
-  bodyClasses: "",
   htmlFontSize: 14,
   htmlTabSize: 2,
   htmlInsertSpaces: true,
@@ -61,6 +58,9 @@ export const EditorProvider = ({
   const [html, setHtml] = useState(penData?.body_content || "");
   const [css, setCss] = useState(penData?.css_content || "");
   const [js, setJs] = useState(penData?.js_content || "");
+  const [headContent, setHeadContent] = useState(penData?.head_content || "");
+  const [htmlLang, setHtmlLang] = useState("en");
+  const [bodyClasses, setBodyClasses] = useState("");
   const [pen, setPen] = useState<PenResponse | null>(penData);
 
   const [settings, setSettings] = useState<UserChoosenSettings>(() =>
@@ -74,9 +74,6 @@ export const EditorProvider = ({
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
-  const setHtmlLang = (v: string) => updateSetting("htmlLang", v);
-  const setHeadContent = (v: string) => updateSetting("headContent", v);
-  const setBodyClasses = (v: string) => updateSetting("bodyClasses", v);
   const setEnableHtmlSuggestion = (v: boolean) =>
     updateSetting("enableHtmlSuggestion", v);
   const setEnableCssSuggestion = (v: boolean) =>
@@ -125,9 +122,6 @@ export const EditorProvider = ({
   }, [debouncedSettings]);
 
   const {
-    htmlLang,
-    headContent,
-    bodyClasses,
     enableHtmlSuggestion,
     enableCssSuggestion,
     enableJsSuggestion,

@@ -227,7 +227,6 @@ const PenEditorContent = () => {
     htmlLang,
   } = useEditor();
 
-  const [mount, setMount] = useState(false);
   const [activeTab, setActiveTab] = useState<Language>("html");
   const isMobile = useIsMobile();
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -236,15 +235,6 @@ const PenEditorContent = () => {
     if (!iframeRef.current) return;
     iframeRef.current.srcdoc = formatHtmlContent(html, headContent, css, js);
   }, [html, headContent, css, js]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setMount(true);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!mount) return <Loader />;
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background">

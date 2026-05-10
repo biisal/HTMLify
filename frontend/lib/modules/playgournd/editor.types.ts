@@ -33,9 +33,6 @@ export interface UserChoosenSettings {
   enableHtmlSuggestion: boolean;
   enableCssSuggestion: boolean;
   enableJsSuggestion: boolean;
-  htmlLang: string;
-  headContent: string;
-  bodyClasses: string;
   htmlFontSize: number;
   htmlTabSize: number;
   htmlInsertSpaces: boolean;

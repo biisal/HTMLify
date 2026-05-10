@@ -34,7 +34,9 @@ export function DeleteAlertDialog({
   const router = useRouter();
 
   const handleDelete = async () => {
-    if (await onConfirm()) {
+    const isDone = await onConfirm();
+    console.log({ isDone });
+    if (isDone) {
       setOpen(false);
       router.refresh();
       toast.success(successMessage);
