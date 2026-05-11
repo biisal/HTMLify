@@ -111,7 +111,7 @@ const EditorWithHeader = ({
           <EditorSettingsDrawer activeLanguage={language} />
         </header>
       )}
-      <div className="flex-1">
+      <div className="flex-1 overflow-hidden">
         <RawCodeEditor
           showSuggestion={currentSettings.showSuggestion}
           fontSize={currentSettings.fontSize}
@@ -275,6 +275,21 @@ const PenEditorContent = () => {
   );
 };
 
+const TitleInput = ({
+  title,
+  setTitle,
+}: {
+  title: string;
+  setTitle: (title: string) => void;
+}) => (
+  <Input
+    value={title}
+    onChange={(e) => setTitle(e.target.value)}
+    placeholder="Enter Pen Title"
+    className="max-w-sm"
+  />
+);
+
 const PenForm = ({ onNew }: { onNew: () => void }) => {
   const { setPen, pen, html, css, js, headContent } = useEditor();
   const [title, setTitle] = useState(pen?.title || "");
@@ -314,18 +329,19 @@ const PenForm = ({ onNew }: { onNew: () => void }) => {
   if (pen?.id) {
     return (
       <div className="pb-1 flex items-center justify-between">
-        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <PenLine className="w-3.5 h-3.5" />
-          <span className="font-medium text-foreground">{pen.title}</span>
+        <div className="flex items-center gap-1.5 text-sm text-foreground">
+          Pen ID:
+          <span className="font-medium text-muted-foreground">{pen.id}</span>
         </div>
         <div className="flex items-center gap-1.5">
+          <TitleInput title={title} setTitle={setTitle} />
           <Button
             size="sm"
             variant="outline"
             onClick={() => handleUpdate(pen.id)}
           >
             <Save className="w-3.5 h-3.5 mr-1.5" />
-            Save
+            Update
           </Button>
           <Button
             size="sm"
@@ -350,12 +366,7 @@ const PenForm = ({ onNew }: { onNew: () => void }) => {
   }
   return (
     <div className="pb-1 flex items-center justify-end gap-2">
-      <Input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Enter Pen Name"
-        className="max-w-sm"
-      />
+      <TitleInput title={title} setTitle={setTitle} />
       <Button onClick={handleSubmit} size="sm">
         Save
       </Button>

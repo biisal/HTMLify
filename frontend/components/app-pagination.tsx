@@ -74,7 +74,9 @@ export function AppPagination({ pageCount, currentPage }: AppPaginationProps) {
 
         <PaginationItem>
           <PaginationNext
-            href={currentPage < pageCount ? createPageURL(currentPage + 1) : "#"}
+            href={
+              currentPage < pageCount ? createPageURL(currentPage + 1) : "#"
+            }
             className={
               currentPage >= pageCount
                 ? "pointer-events-none opacity-50"
