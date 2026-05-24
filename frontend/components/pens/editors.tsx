@@ -1,13 +1,13 @@
 "use client";
 
-import { Eye, PenLine, Plus, Save } from "lucide-react";
+import { Eye, Plus, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ElementType, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
+import { DasshboardNavbar } from "@/components/dashboard/dashbaord-navbar";
 import { CSS, HTML, JavaScript } from "@/components/icons";
-import { Loader } from "@/components/loader";
 import { EditorSettingsDrawer } from "@/components/pens/editor-settings";
 import { RawCodeEditor } from "@/components/playgroud/code-editor";
 import { Button } from "@/components/ui/button";
@@ -286,7 +286,7 @@ const TitleInput = ({
     value={title}
     onChange={(e) => setTitle(e.target.value)}
     placeholder="Enter Pen Title"
-    className="max-w-sm"
+    className="min-w-32 md:w-96"
   />
 );
 
@@ -328,7 +328,7 @@ const PenForm = ({ onNew }: { onNew: () => void }) => {
 
   if (pen?.id) {
     return (
-      <div className="pb-1 flex items-center justify-between">
+      <div className="pb-1 w-full flex items-center justify-between">
         <div className="flex items-center gap-1.5 text-sm text-foreground">
           Pen ID:
           <span className="font-medium text-muted-foreground">{pen.id}</span>
@@ -365,7 +365,7 @@ const PenForm = ({ onNew }: { onNew: () => void }) => {
     );
   }
   return (
-    <div className="pb-1 flex items-center justify-end gap-2">
+    <div className="pb-1 w-full flex items-center justify-end gap-2">
       <TitleInput title={title} setTitle={setTitle} />
       <Button onClick={handleSubmit} size="sm">
         Save
@@ -379,7 +379,9 @@ export const PenEditor = ({ data }: { data: PenResponse | null }) => {
 
   return (
     <EditorProvider key={`${data?.id ?? "new"}-${resetKey}`} penData={data}>
-      <PenForm onNew={() => setResetKey((prev) => prev + 1)} />
+      <DasshboardNavbar>
+        <PenForm onNew={() => setResetKey((prev) => prev + 1)} />
+      </DasshboardNavbar>
       <PenEditorContent />
     </EditorProvider>
   );

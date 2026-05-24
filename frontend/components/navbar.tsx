@@ -1,20 +1,13 @@
 "use client";
 
-import { Menu, Search } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import * as React from "react";
 
 import { Logo } from "@/components/logo";
+import { NavbarSearch } from "@/components/nav-search";
 import { Button } from "@/components/ui/button";
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,68 +23,6 @@ const NAV_LINKS = [
   { name: "Frames", href: "/frames" },
   { name: "API", href: "/api" },
 ];
-
-const NAV_SEARCH_LINKS = NAV_LINKS.concat(
-  { name: "Upload Files", href: "/dashboard/file/upload" },
-  { name: "Add New File", href: "/dashboard/file/new" },
-  { name: "Git Clone", href: "/dashboard/file/git-clone" },
-  { name: "Temporary File", href: "/dashboard/tmp" },
-);
-function NavbarSearch() {
-  const [open, setOpen] = React.useState(false);
-  const router = useRouter();
-
-  React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
-      }
-    };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
-
-  return (
-    <>
-      <button
-        onClick={() => setOpen(true)}
-        className="flex items-center justify-between gap-1 sm:gap-2 rounded-md bg-muted/30 px-3 py-1.5 hover:bg-muted/50 transition-colors group border border-transparent"
-      >
-        <div className="flex items-center gap-2">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <span className="w-20 md:w-32 hidden md:block text-left bg-transparent text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-            Type here...
-          </span>
-        </div>
-        <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex text-muted-foreground">
-          <span className="text-[10px]">⌘</span>K
-        </kbd>
-      </button>
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Links">
-            {NAV_SEARCH_LINKS.map((link) => (
-              <CommandItem
-                key={link.href}
-                value={link.name}
-                onSelect={() => {
-                  router.push(link.href);
-                  setOpen(false);
-                }}
-              >
-                <span>{link.name}</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
-    </>
-  );
-}
 
 export function Navbar() {
   const pathname = usePathname();

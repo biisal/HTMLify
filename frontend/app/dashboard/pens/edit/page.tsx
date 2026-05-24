@@ -17,9 +17,11 @@ const page = async ({
     penRes = data;
   }
   return (
-    <div className="w-full h-full">
-      <PenEditor data={penRes} />
-    </div>
+    <>
+      <div className="w-full h-full">
+        <PenEditor data={penRes} />
+      </div>
+    </>
   );
 };
 

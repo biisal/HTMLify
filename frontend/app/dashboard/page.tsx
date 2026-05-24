@@ -1,6 +1,8 @@
 import { Plus } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { DasshboardNavbar } from "@/components/dashboard/dashbaord-navbar";
 import { DashboardBreadcrumb } from "@/components/dashboard/dashboard-breadcrumb";
 import { FileTable } from "@/components/dashboard/file-table";
 import { Button } from "@/components/ui/button";
@@ -49,27 +51,32 @@ const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
   const totalItems = data?.items_count ?? 0;
 
   return (
-    <div className="flex flex-col gap-4 p-6 w-full">
-      <div className="flex items-center justify-between">
-        <DashboardBreadcrumb path={path} />
-        <Button size="sm">
-          <Plus className="h-4 w-4" />
-          New
-        </Button>
+    <>
+      <DasshboardNavbar className="w-full">
+        <div className="flex items-center justify-between w-full">
+          <DashboardBreadcrumb path={path} />
+          <Button size="sm" asChild>
+            <Link href="/dashboard/file/new">
+              <Plus className="h-4 w-4" />
+              New
+            </Link>
+          </Button>
+        </div>
+      </DasshboardNavbar>
+      <div className="flex flex-col gap-4 p-6 w-full">
+        <FileTable
+          items={items}
+          totalItems={totalItems}
+          currentPage={currentPage}
+          pageSize={pageSize}
+        />
+
+        <p className="text-xs text-muted-foreground">
+          Showing {items.length} of {totalItems}{" "}
+          {totalItems === 1 ? "item" : "items"}
+        </p>
       </div>
-
-      <FileTable
-        items={items}
-        totalItems={totalItems}
-        currentPage={currentPage}
-        pageSize={pageSize}
-      />
-
-      <p className="text-xs text-muted-foreground">
-        Showing {items.length} of {totalItems}{" "}
-        {totalItems === 1 ? "item" : "items"}
-      </p>
-    </div>
+    </>
   );
 };
 

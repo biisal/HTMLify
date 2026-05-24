@@ -33,6 +33,7 @@ export function NavMain({
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
+                className="hover:bg-sidebar-accent/40"
                 isActive={item.url === pathname}
                 tooltip={item.title}
                 asChild

@@ -14,15 +14,17 @@ import React from "react";
 
 import { NavMain } from "@/components/dashboard/nav-mian";
 import { Logo } from "@/components/logo";
+import { NavUser } from "@/components/navuser";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { env } from "@/lib/env";
+import { UserFullInfo } from "@/lib/modules/user/user.types";
 
 const navFile = [
   {
@@ -80,35 +82,34 @@ const navPen = [
   },
 ];
 export const DashboardSidebar = ({
+  user,
   ...props
-}: React.ComponentProps<typeof Sidebar>) => {
+}: { user: UserFullInfo | null } & React.ComponentProps<typeof Sidebar>) => {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
+            <Link
+              href="/"
+              className="flex items-center bg-muted/15 hover:bg-muted/20 rounded gap-3 p-2"
             >
-              <Link href="/">
-                <Logo />
-                <span className="text-base font-semibold">
-                  {env.NEXT_PUBLIC_SITE_NAME}
-                </span>
-              </Link>
-            </SidebarMenuButton>
+              <Logo />
+              <span className="text-base font-semibold">
+                {env.NEXT_PUBLIC_SITE_NAME}
+              </span>
+            </Link>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu></SidebarMenu>
+        <SidebarMenu />
         <NavMain label="Files" items={navFile} />
         <NavMain label="Pens" items={navPen} />
       </SidebarContent>
-      {/* <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter> */}
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
     </Sidebar>
   );
 };

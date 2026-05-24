@@ -1,3 +1,4 @@
+import { DasshboardNavbar } from "@/components/dashboard/dashbaord-navbar";
 import { PensTable } from "@/components/pens/pens-table";
 import { env } from "@/lib/env";
 import { getPens } from "@/lib/modules/pen/pen.api";
@@ -26,13 +27,16 @@ export default async function PensPage({
   );
 
   return (
-    <div className="w-full h-full p-6">
-      <PensTable
-        pens={paginatedPens}
-        pageCount={pageCount}
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-      />
-    </div>
+    <>
+      <DasshboardNavbar title="Pens" />
+      <div className="w-full h-full p-6">
+        <PensTable
+          pens={paginatedPens}
+          pageCount={pageCount}
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+        />
+      </div>
+    </>
   );
 }

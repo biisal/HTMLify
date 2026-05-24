@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit2, Eye, MoreHorizontal, Trash2 } from "lucide-react";
+import { Edit2, Eye, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 

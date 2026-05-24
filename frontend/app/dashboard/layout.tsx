@@ -1,14 +1,15 @@
 import React from "react";
 
-import { DasshboardNavbar } from "@/components/dashboard/dashbaord-navbar";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { getMe } from "@/lib/modules/user/user.actions";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getMe();
   return (
     <SidebarProvider
       style={
@@ -18,12 +19,9 @@ export default function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <DashboardSidebar />
+      <DashboardSidebar user={user} />
       <SidebarInset className="overflow-hidden">
-        <DasshboardNavbar />
-        <main className="mx-auto flex w-full flex-1 flex-col p-2">
-          {children}
-        </main>
+        <main className="mx-auto flex w-full flex-1 flex-col">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );
