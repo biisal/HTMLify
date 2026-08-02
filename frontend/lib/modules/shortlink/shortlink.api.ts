@@ -1,30 +1,26 @@
 import { env } from "@/lib/env";
-import { APIError, parseServerError } from "@/lib/errors";
 import { APICall } from "@/lib/fetch/api";
 
 import { ShortLink } from "./shortlink.types";
 export const getOriginalUrlFromShort = async (
   short: string,
-): Promise<ShortLink> => {
-  const response = await APICall(
+): Promise<ShortLink | null> => {
+  const { response: response, error } = await APICall(
     `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/shortlinks/${short}`,
   );
 
-  if (!response.ok) {
-    const message = await parseServerError(
-      response,
-      `Failed to fetch source link for short: ${short}`,
-    );
-    throw new APIError(message, response.status);
+  if (error) {
+    return null;
   }
-  return (await response.json()) as ShortLink;
+
+  return (await response?.json()) as ShortLink;
 };
 
 export const createShortLink = async (
   href: string,
   isNew: boolean = false,
-): Promise<ShortLink> => {
-  const response = await APICall(
+): Promise<{ data: ShortLink | null; error: string | null }> => {
+  const { response: response, error } = await APICall(
     `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/shortlinks`,
     {
       method: "POST",
@@ -35,12 +31,8 @@ export const createShortLink = async (
     },
   );
 
-  if (!response.ok) {
-    const message = await parseServerError(
-      response,
-      "Failed to create short link",
-    );
-    throw new APIError(message, response.status);
+  if (error) {
+    return { data: null, error };
   }
-  return (await response.json()) as ShortLink;
+  return { data: (await response?.json()) as ShortLink, error: null };
 };

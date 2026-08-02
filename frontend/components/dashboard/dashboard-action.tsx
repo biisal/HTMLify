@@ -1,5 +1,6 @@
 import { EllipsisVertical } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 import { DeleteAlertDialog } from "@/components/dashboard/delete-alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { deleteFile } from "@/lib/modules/file/file.api";
 import { FileItem, FolderItem } from "@/lib/modules/file/file.types";
 
 export function DashboardAction({
@@ -62,7 +64,19 @@ export function DashboardAction({
           )}
           <DropdownMenuItem asChild>
             {file && "id" in file && (
-              <DeleteAlertDialog id={file.id} path={file.path} />
+              <DeleteAlertDialog
+                title="Delete file"
+                description={`Are you sure you want to delete ${file.path}?`}
+                successMessage="File deleted successfully"
+                onConfirm={async () => {
+                  const { error } = await deleteFile(file.id);
+                  if (error) {
+                    toast.error(error);
+                    return false;
+                  }
+                  return true;
+                }}
+              />
             )}
           </DropdownMenuItem>
         </DropdownMenuGroup>

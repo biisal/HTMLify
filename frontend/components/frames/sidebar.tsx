@@ -49,12 +49,8 @@ export const FramesSidebar = ({
   const router = useRouter();
 
   const handleCopy = async () => {
-    const short = await createShortLink(frmae.url);
-    if (!short) {
-      await copyToClipboard(frmae.url);
-      return;
-    }
-    await copyToClipboard(short.url);
+    const { data } = await createShortLink(frmae.url);
+    await copyToClipboard(data?.url || frmae.url);
   };
 
   const navItems = [

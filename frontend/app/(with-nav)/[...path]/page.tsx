@@ -12,7 +12,6 @@ import {
 import { MediaViewer } from "@/components/media-viewer";
 import { CodePlayground } from "@/components/playgroud/code-playground";
 import { Button } from "@/components/ui/button";
-import { APIError } from "@/lib/errors";
 import { getFileContentByPath } from "@/lib/modules/file/file.api";
 import { getFileContentType } from "@/lib/modules/file/file.utils";
 import { getLanguageByPath } from "@/lib/modules/playgournd/editor.utils";
@@ -38,39 +37,30 @@ const StaticServe = async ({
   const filename = `/${path.join("/")}`.replace(/^\/\//, "/");
   const language = getLanguageByPath(filename);
 
-  let fileData: FileData;
-  let error: string | null = null;
-
-  try {
-    if (filename.startsWith("/.well-known")) {
-      return null;
-    }
-    const response = await getFileContentByPath(filename);
-    const contentType = response.headers.get("content-type");
-    const fileType = getFileContentType(filename, contentType);
-    const isMedia =
-      fileType === "img" || fileType === "video" || fileType === "audio";
-
-    fileData = isMedia
-      ? { isMedia: true, url: response.url, fileType, contentType }
-      : { isMedia: false, code: await response.text() };
-  } catch (err) {
-    error =
-      err instanceof APIError
-        ? err.message
-        : "Failed to load file content or file not found.";
+  if (filename.startsWith("/.well-known")) {
+    return null;
   }
 
-  if (error) {
+  const response = await getFileContentByPath(filename);
+  if (!response) {
     return (
       <div className="flex flex-col h-[70vh] items-center justify-center text-destructive">
-        {error}
+        Failed to load file content or file not found.
       </div>
     );
   }
 
-  if (fileData!.isMedia) {
-    const { url, fileType, contentType } = fileData!;
+  const contentType = response.headers.get("content-type");
+  const fileType = getFileContentType(filename, contentType);
+  const isMedia =
+    fileType === "img" || fileType === "video" || fileType === "audio";
+
+  const fileData: FileData = isMedia
+    ? { isMedia: true, url: response.url, fileType, contentType }
+    : { isMedia: false, code: await response.text() };
+
+  if (fileData.isMedia) {
+    const { url, fileType, contentType } = fileData;
     return (
       <div className="flex flex-col items-center max-h-[70vh]">
         <MediaViewer
@@ -83,7 +73,7 @@ const StaticServe = async ({
     );
   }
 
-  const { code } = fileData! as { isMedia: false; code: string };
+  const { code } = fileData;
   return (
     <div className="flex flex-col max-h-[70vh]">
       <CodeBlockContainer language={language}>

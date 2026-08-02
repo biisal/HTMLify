@@ -26,14 +26,14 @@ export const Shortlink = () => {
       return;
     }
 
-    try {
-      const data = await createShortLink(url, isNew);
-      setShortLinkResult(data);
-      setUrl("");
-      setUrlError("");
-    } catch (error) {
-      setUrlError(error instanceof Error ? error.message : "An error occurred");
+    const { data, error } = await createShortLink(url, isNew);
+    if (error) {
+      setUrlError(error);
+      return;
     }
+    setShortLinkResult(data);
+    setUrl("");
+    setUrlError("");
   };
   return (
     <div>

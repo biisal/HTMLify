@@ -1,11 +1,22 @@
-import { cookies } from "next/headers";
-
+"use server";
 import { env } from "@/lib/env";
 
-type CookieStore = Awaited<ReturnType<typeof cookies>>;
+type CookieSetter = {
+  set(
+    name: string,
+    value: string,
+    options?: {
+      httpOnly?: boolean;
+      secure?: boolean;
+      sameSite?: "lax" | "strict" | "none";
+      maxAge?: number;
+      path?: string;
+    },
+  ): void;
+};
 
-function setCookie(
-  cookieStore: CookieStore,
+async function setCookie(
+  cookieStore: CookieSetter,
   token: string,
   type: "access_token" | "refresh_token",
 ) {

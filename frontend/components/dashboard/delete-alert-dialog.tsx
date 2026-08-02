@@ -14,41 +14,49 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { deleteFile } from "@/lib/modules/file/file.api";
 
 interface AlertDialogProps {
-  id: number;
-  path: string;
+  title?: string;
+  description?: string;
+  onConfirm: () => Promise<boolean>;
+  successMessage?: string;
+  trigger?: React.ReactNode;
 }
 
-export function DeleteAlertDialog({ id, path }: AlertDialogProps) {
+export function DeleteAlertDialog({
+  title = "Are you sure?",
+  description = "This action cannot be undone.",
+  onConfirm,
+  successMessage = "Deleted successfully",
+  trigger,
+}: AlertDialogProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+
   const handleDelete = async () => {
-    try {
-      await deleteFile(id);
+    const isDone = await onConfirm();
+    console.log({ isDone });
+    if (isDone) {
       setOpen(false);
       router.refresh();
-    } catch (e) {
-      console.error(e);
-      toast.error(e instanceof Error ? e.message : "Failed to delete file");
+      toast.success(successMessage);
     }
-    setOpen(false);
   };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="w-full justify-start pl-2 ">
-          Delete
-        </Button>
+        {trigger || (
+          <Button variant="ghost" className="w-full justify-start pl-2">
+            Delete
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete file</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Are you sure you want to delete this file?
-            <br />
-            <p className="bg-muted-foreground/5 p-2 mt-2 rounded-lg">{path}</p>
+            {description}
           </DialogDescription>
         </DialogHeader>
 

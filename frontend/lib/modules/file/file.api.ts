@@ -1,5 +1,4 @@
 import { env } from "@/lib/env";
-import { APIError, parseServerError } from "@/lib/errors";
 import { APICall as APICall } from "@/lib/fetch/api";
 import { GitCloneFormType } from "@/lib/modules/file/file.schema";
 import { FileIDResponse, FolderResponse } from "@/lib/modules/file/file.types";
@@ -11,7 +10,10 @@ type FileInfoParams =
 export const getFileInfoByPathOrID = async ({
   path,
   id,
-}: FileInfoParams): Promise<FileIDResponse> => {
+}: FileInfoParams): Promise<{
+  data: FileIDResponse | null;
+  error: string | null;
+}> => {
   let params = "";
   if (path) {
     params = `path=${path}`;
@@ -19,44 +21,41 @@ export const getFileInfoByPathOrID = async ({
     params = `id=${id}`;
   }
 
-  const response = await APICall(
+  const { response, error } = await APICall(
     `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/files?${params}`,
   );
 
-  if (!response.ok) {
-    const message = await parseServerError(
-      response,
-      "Failed to fetch file info",
-    );
-    throw new APIError(message, response.status);
-  }
-  return response.json() as Promise<FileIDResponse>;
+  if (error) return { data: null, error };
+  return { data: (await response?.json()) as FileIDResponse, error: null };
 };
 
-export const getFileContentById = async (id: number): Promise<Response> => {
-  const response = await APICall(
+export const getFileContentById = async (
+  id: number,
+): Promise<Response | null> => {
+  const { response, error } = await APICall(
     `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/files/${id}/content`,
   );
 
-  if (!response.ok) {
-    const message = await parseServerError(
-      response,
-      `Failed to fetch file content for id: ${id}`,
-    );
-    throw new APIError(message, response.status);
+  if (error || !response) {
+    return null;
   }
   return response;
 };
 
-export const getFileContentByPath = async (path: string): Promise<Response> => {
-  const data = await getFileInfoByPathOrID({ path });
+export const getFileContentByPath = async (
+  path: string,
+): Promise<Response | null> => {
+  const { data, error } = await getFileInfoByPathOrID({ path });
+  if (error || !data) {
+    return null;
+  }
   return getFileContentById(data.id);
 };
 
 export const uploadFile = async (
   formData: FormData,
-): Promise<FileIDResponse> => {
-  const response = await APICall(
+): Promise<{ data: FileIDResponse | null; error: string | null }> => {
+  const { response, error } = await APICall(
     `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/files/upload`,
     {
       method: "POST",
@@ -64,18 +63,17 @@ export const uploadFile = async (
     },
   );
 
-  if (!response.ok) {
-    const message = await parseServerError(response, "Failed to upload file");
-    throw new APIError(message, response.status);
+  if (error || !response) {
+    return { data: null, error: error || "Failed to upload file" };
   }
-  return response.json() as Promise<FileIDResponse>;
+  return { data: (await response.json()) as FileIDResponse, error: null };
 };
 
 export const updateFile = async (
   id: number,
   formData: FormData,
-): Promise<FileIDResponse> => {
-  const response = await APICall(
+): Promise<{ data: FileIDResponse | null; error: string | null }> => {
+  const { response, error } = await APICall(
     `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/files/${id}/update`,
     {
       method: "PATCH",
@@ -83,31 +81,21 @@ export const updateFile = async (
     },
   );
 
-  if (!response.ok) {
-    const message = await parseServerError(response, "Failed to update file");
-    throw new APIError(message, response.status);
+  if (error || !response) {
+    return { data: null, error: error || "Failed to update file" };
   }
-  return response.json() as Promise<FileIDResponse>;
+  return { data: (await response.json()) as FileIDResponse, error: null };
 };
 
-export const deleteFile = async (id: number): Promise<void> => {
-  const response = await APICall(
+export const deleteFile = async (id: number) => {
+  const { error } = await APICall(
     `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/files/${id}`,
     {
       method: "DELETE",
     },
   );
 
-  console.log({ response });
-
-  if (!response.ok) {
-    const message = await parseServerError(response, "Failed to delete file");
-    throw new APIError(message, response.status);
-  }
-
-  if (response.status !== 204) {
-    return response.json();
-  }
+  return { error };
 };
 
 export const getFolderByPath = async (
@@ -115,7 +103,7 @@ export const getFolderByPath = async (
   expand: boolean = true,
   page: number = 1,
   pageSize: number = env.NEXT_PUBLIC_PAGE_SIZE,
-): Promise<FolderResponse> => {
+): Promise<{ data: FolderResponse | null; error: string | null }> => {
   const params = new URLSearchParams({
     path,
     expand: expand.toString(),
@@ -123,21 +111,20 @@ export const getFolderByPath = async (
     page_size: pageSize.toString(),
   });
 
-  const response = await APICall(
+  const { response, error } = await APICall(
     `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/folders?${params.toString()}`,
   );
 
-  if (!response.ok) {
-    const message = await parseServerError(response, "Failed to fetch folder");
-    throw new APIError(message, response.status);
+  if (error || !response) {
+    return { data: null, error: error || "Failed to fetch folder" };
   }
-  return response.json() as Promise<FolderResponse>;
+  return { data: (await response.json()) as FolderResponse, error: null };
 };
 
 export const gitCloneFile = async (
   data: GitCloneFormType,
-): Promise<FileIDResponse> => {
-  const response = await APICall(
+): Promise<{ data: FileIDResponse | null; error: string | null }> => {
+  const { response, error } = await APICall(
     `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/files/git-clone`,
     {
       method: "POST",
@@ -148,12 +135,8 @@ export const gitCloneFile = async (
     },
   );
 
-  if (!response.ok) {
-    const message = await parseServerError(
-      response,
-      "Failed to clone repository",
-    );
-    throw new APIError(message, response.status);
+  if (error || !response) {
+    return { data: null, error: error || "Failed to clone repository" };
   }
-  return response.json() as Promise<FileIDResponse>;
+  return { data: (await response.json()) as FileIDResponse, error: null };
 };

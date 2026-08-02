@@ -24,8 +24,8 @@ export async function POST(request: Request) {
 
     const cookieStore = await cookies();
 
-    setCookie(cookieStore, data.access_token, "access_token");
-    setCookie(cookieStore, data.refresh_token, "refresh_token");
+    await setCookie(cookieStore, data.access_token, "access_token");
+    await setCookie(cookieStore, data.refresh_token, "refresh_token");
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,

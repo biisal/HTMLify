@@ -1,18 +1,16 @@
 import { NextResponse } from "next/server";
 
-import { getTmpFileContentById } from "@/lib/modules/tmp/tmp.api";
+import { env } from "@/lib/env";
+import { APICall } from "@/lib/fetch/api";
 
 export const serveTmpFile = async (fileID: string) => {
-  try {
-    const resp = await getTmpFileContentById(fileID);
+  const { response, error } = await APICall(
+    `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/tmp-files/${fileID}/content`,
+  );
 
-    if (!resp || !resp.ok || !resp.body) {
-      return NextResponse.next();
-    }
-
-    return resp;
-  } catch (error) {
-    console.error("Failed to serve tmp file", error);
+  if (error || !response) {
     return NextResponse.next();
   }
+
+  return response;
 };

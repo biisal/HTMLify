@@ -66,7 +66,6 @@ export function CodePlayground({
   openEditor = false,
 }: CodeSidebarProps) {
   const isHtml = language === "html" || language === "xml";
-  console.log("isHtml", isHtml);
   const [isEditorOpen, setIsEditorOpen] = useState(openEditor);
 
   return (

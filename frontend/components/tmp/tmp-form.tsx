@@ -56,21 +56,20 @@ export const TmpForm = () => {
     }
 
     setIsPending(true);
-    try {
-      const data = await createTmpFile({
-        file,
-        name: name || undefined,
-        expiry: finalExpiry,
-      });
-      setResult(data);
-      setFile(null);
-      setName("");
-      setError("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setIsPending(false);
+    const { data, error } = await createTmpFile({
+      file,
+      name: name || undefined,
+      expiry: finalExpiry,
+    });
+    if (error || !data) {
+      setError(error || "Failed to create temporary file link");
+      return;
     }
+    setResult(data);
+    setFile(null);
+    setName("");
+    setError("");
+    setIsPending(false);
   };
 
   return (
