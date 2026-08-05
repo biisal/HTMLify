@@ -44,20 +44,38 @@ async def create_file_by_upload(
     password: Optional[str] = Form(""),
     mode: FileModeEnum = Form("source"),
     visibility: FileVisibilityEnum = Form("public"),
+    update: Optional[bool] = Form(False),
     user: User = Depends(AuthService.get_current_user)
 ) -> FileRead:
     if file:
         content = await file.read()
     if content is None:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Either file or content must be provided")
-    _file = FileService.create_file(
-        user,
-        title=title or "",
-        path=path or "",
-        content=content,
-        password=password,
-        mode=mode,
-        visibility=visibility,
+    _file = FileService.get_file_by_path(path or "") 
+    if _file and not update:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            "File on this path already exists"
+        )
+    if not _file:
+        _file = FileService.create_file(
+            user,
+            title=title or "",
+            path=path or "",
+            content=content,
+            password=password,
+            mode=mode,
+            visibility=visibility,
+            )
+    elif update:
+        _file = FileService.update_file(
+            user,
+            _file,
+            title=title or "",
+            content=content,
+            password=password,
+            mode=mode,
+            visibility=visibility,
         )
     return FileRead.from_orm(_file, show_password=True)
 
