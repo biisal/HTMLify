@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import { FileDropzone } from "@/components/file/file-dropzone";
 import { TmpResult } from "@/components/tmp/tmp-result";
 import { Button } from "@/components/ui/button";
@@ -14,63 +12,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createTmpFile } from "@/lib/modules/tmp/tmp.api";
-import { TmpFile } from "@/lib/modules/tmp/tmp.types";
-
-const EXPIRY_OPTIONS = [
-  { label: "1 Minute", value: "60" },
-  { label: "5 Minutes", value: "300" },
-  { label: "10 Minutes", value: "600" },
-  { label: "1 Hour", value: "3600" },
-  { label: "1 Day", value: "86400" },
-  { label: "1 Week", value: "604800" },
-  { label: "Custom...", value: "custom" },
-];
+import { useTmpForm } from "@/lib/hooks/use-tmp-form";
 
 export const TmpForm = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [name, setName] = useState("");
-  const [expiry, setExpiry] = useState("3600"); // 1 hour default
-  const [customExpiry, setCustomExpiry] = useState("60");
-  const [customUnit, setCustomUnit] = useState("1"); // multiplier
-  const [error, setError] = useState("");
-  const [result, setResult] = useState<TmpFile | null>(null);
-  const [isPending, setIsPending] = useState(false);
-
-  const isCustom = expiry === "custom";
-
-  const handleSubmit = async () => {
-    if (!file) {
-      setError("Please select a file to upload");
-      return;
-    }
-
-    let finalExpiry = parseInt(expiry, 10);
-    if (isCustom) {
-      const value = parseInt(customExpiry, 10);
-      if (isNaN(value) || value <= 0) {
-        setError("Please enter a valid expiry time");
-        return;
-      }
-      finalExpiry = value * parseInt(customUnit, 10);
-    }
-
-    setIsPending(true);
-    const { data, error } = await createTmpFile({
-      file,
-      name: name || undefined,
-      expiry: finalExpiry,
-    });
-    if (error || !data) {
-      setError(error || "Failed to create temporary file link");
-      return;
-    }
-    setResult(data);
-    setFile(null);
-    setName("");
-    setError("");
-    setIsPending(false);
-  };
+  const {
+    file,
+    name,
+    expiry,
+    customExpiry,
+    customUnit,
+    error,
+    result,
+    isPending,
+    isCustom,
+    expiryOptions,
+    setFile,
+    setName,
+    setExpiry,
+    setCustomExpiry,
+    setCustomUnit,
+    handleSubmit,
+  } = useTmpForm();
 
   return (
     <div className="space-y-6">
@@ -82,7 +44,7 @@ export const TmpForm = () => {
           <FileDropzone
             value={file}
             onChange={(val) => setFile(val as File)}
-            maxFiles={1}
+            maxFiles={100}
             className="w-full"
           />
         </div>
@@ -113,7 +75,7 @@ export const TmpForm = () => {
                   <SelectValue placeholder="Select expiry" />
                 </SelectTrigger>
                 <SelectContent>
-                  {EXPIRY_OPTIONS.map((option) => (
+                  {expiryOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>

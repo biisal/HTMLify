@@ -11,6 +11,7 @@ interface FilePreviewProps {
   code?: string;
   onChange?: (code: string) => void;
   mediaUrl?: string | null;
+  plain?: boolean;
 }
 const getCacheBustedUrl = (url: string | null | undefined) => {
   if (!url) return "";
@@ -25,16 +26,18 @@ export function FilePreview({
   code,
   onChange,
   mediaUrl,
+  plain = false,
 }: FilePreviewProps) {
   const finalUrl = getCacheBustedUrl(mediaUrl || path);
 
   if (fileType === "binary") {
     return (
       <div
-        className="w-full p-8 flex flex-col 
-      items-center justify-center gap-6
-      bg-linear-to-b from-muted/50 to-muted/10 
-      rounded-xl border border-border/50 my-4 shadow-sm"
+        className={
+          plain
+            ? "w-full px-8 py-12 flex flex-col items-center justify-center gap-6"
+            : "w-full p-8 flex flex-col items-center justify-center gap-6 bg-linear-to-b from-muted/50 to-muted/10 rounded-xl border border-border/50 my-4 shadow-sm"
+        }
       >
         <p className="text-muted-foreground">can&apos;t preview this file</p>
       </div>
@@ -43,13 +46,15 @@ export function FilePreview({
   if (fileType === "img") {
     return (
       <div
-        className="relative w-full h-[60vh] min-h-75 
-      flex items-center justify-center bg-muted/20 
-      rounded-xl border border-border/50 overflow-hidden my-4"
+        className={
+          plain
+            ? "w-full h-full min-h-75 flex items-center justify-center"
+            : "relative w-full h-[60vh] min-h-75 flex items-center justify-center bg-muted/20 rounded-xl border border-border/50 overflow-hidden my-4"
+        }
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          className="w-full h-full object-contain p-2"
+          className="w-full h-full object-contain text-transparent"
           src={finalUrl}
           alt={path}
         />
@@ -59,9 +64,11 @@ export function FilePreview({
   if (fileType === "video") {
     return (
       <div
-        className="relative w-full h-[60vh] min-h-75 
-      flex items-center justify-center bg-black/95 
-      rounded-xl border border-border/50 overflow-hidden my-4 shadow-sm"
+        className={
+          plain
+            ? "relative w-full h-full min-h-75 flex items-center justify-center"
+            : "relative w-full h-[60vh] min-h-75 flex items-center justify-center bg-black/95 rounded-xl border border-border/50 overflow-hidden my-4 shadow-sm"
+        }
       >
         <video
           src={finalUrl}
@@ -74,9 +81,11 @@ export function FilePreview({
   if (fileType === "audio") {
     return (
       <div
-        className="w-full p-8 flex flex-col items-center justify-center 
-      gap-6 bg-linear-to-b from-muted/50 to-muted/10 
-      rounded-xl border border-border/50 my-4 shadow-sm"
+        className={
+          plain
+            ? "w-full px-8 py-12 flex flex-col items-center justify-center gap-6"
+            : "w-full p-8 flex flex-col items-center justify-center gap-6 bg-linear-to-b from-muted/50 to-muted/10 rounded-xl border border-border/50 my-4 shadow-sm"
+        }
       >
         <div
           className="p-4 bg-background 
