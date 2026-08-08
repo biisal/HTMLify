@@ -1,10 +1,14 @@
 import { env } from "@/lib/env";
-import { APICall } from "@/lib/fetch/api";
 
 import { TmpFile, TmpFormType } from "./tmp.types";
 
+interface CreateTmpFileOptions {
+  onProgress?: (progress: number) => void;
+}
+
 export const createTmpFile = async (
   data: TmpFormType,
+  options?: CreateTmpFileOptions,
 ): Promise<{ data: TmpFile | null; error: string | null }> => {
   const formData = new FormData();
   if (data.file) {
@@ -13,22 +17,40 @@ export const createTmpFile = async (
   if (data.name) {
     formData.append("name", data.name);
   }
-  formData.append("expiry", data.expiry.toString());
-
-  const { response, error } = await APICall(
-    `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/tmp-files`,
-    {
-      method: "POST",
-      body: formData,
-    },
-  );
-
-  if (error || !response) {
-    return {
-      data: null,
-      error: error || "Failed to create temporary file link",
-    };
+  if (data.expiry !== undefined) {
+    formData.append("expiry", data.expiry.toString());
   }
 
-  return { data: (await response.json()) as TmpFile, error: null };
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/tmp-files`);
+    xhr.withCredentials = true;
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable && options?.onProgress) {
+        options.onProgress(Math.round((event.loaded / event.total) * 100));
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          resolve({
+            data: JSON.parse(xhr.responseText) as TmpFile,
+            error: null,
+          });
+        } catch {
+          resolve({ data: null, error: "Invalid response from server" });
+        }
+      } else {
+        resolve({ data: null, error: "Failed to create temporary file link" });
+      }
+    };
+
+    xhr.onerror = () => {
+      resolve({ data: null, error: "Failed to create temporary file link" });
+    };
+
+    xhr.send(formData);
+  });
 };

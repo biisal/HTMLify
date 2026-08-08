@@ -8,5 +8,5 @@ export interface TmpFile {
 export interface TmpFormType {
   file: File | null;
   name?: string;
-  expiry: number;
+  expiry?: number;
 }

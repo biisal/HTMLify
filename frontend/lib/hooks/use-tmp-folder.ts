@@ -1,7 +1,11 @@
 import { create } from "zustand";
+
+import { createTmpFile } from "@/lib/modules/tmp/tmp.api";
+import {
+  AddFileToTmpFolder,
+  createTmpFolder,
+} from "@/lib/tmp-folder/tmp-folder.api";
 import { TmpFolderResponse } from "../tmp-folder/tmp-folder.types";
-import { APICall } from "../fetch/api";
-import { env } from "../env";
 
 type UploadStatus = "queued" | "uploading" | "completed" | "failed";
 
@@ -12,14 +16,11 @@ interface UploadItem {
   status: UploadStatus;
 }
 
-interface FolderAuth {
-  folderName: string;
-  folderId: string;
-}
-
 interface TmpFolderStore {
-  folder: FolderAuth;
+  folder: TmpFolderResponse | null;
   setFolder: (name: string, folderId?: string) => void;
+
+  createFolder: (name: string) => Promise<{ success: boolean; error: string | null }>;
 
   queue: UploadItem[];
   isUploading: boolean;
@@ -30,18 +31,31 @@ interface TmpFolderStore {
 }
 
 export const useTmpFolderStore = create<TmpFolderStore>((set, get) => ({
-  folder: {
-    folderName: "test",
-    folderId: "",
-  },
+  folder: null,
 
-  setFolder: (folderName, folderId = "") =>
+  setFolder: (folderName, folderId = "", authCode = "") =>
     set({
       folder: {
-        folderName,
-        folderId,
+        id: folderId,
+        files: [],
+        name: folderName,
+        auth_code: authCode,
       },
     }),
+
+  createFolder: async (name: string) => {
+    try {
+      const { data, error } = await createTmpFolder(name);
+      if (error || !data) {
+        return { success: false, error: error ?? "Failed to create folder" };
+      }
+      set({ folder: data });
+      return { success: true, error: null };
+    } catch (err) {
+      console.error(err);
+      return { success: false, error: "Failed to create folder" };
+    }
+  },
 
   queue: [],
   isUploading: false,
@@ -81,14 +95,14 @@ export const useTmpFolderStore = create<TmpFolderStore>((set, get) => ({
         }));
 
         try {
-          let folderId = folder.folderId;
+          let folderId = folder?.id;
 
           if (!folderId) {
-            if (!folder.folderName) {
+            if (!folder?.name) {
               throw new Error("Folder name is required");
             }
 
-            const { data, error } = await createTmpFolder(folder.folderName);
+            const { data, error } = await createTmpFolder(folder.name);
 
             if (error || !data) {
               throw new Error(error ?? "Failed to create folder");
@@ -97,14 +111,15 @@ export const useTmpFolderStore = create<TmpFolderStore>((set, get) => ({
             folderId = data.id;
 
             set({
-              folder: {
-                folderName: folder.folderName,
-                folderId,
-              },
+              folder: data,
             });
           }
 
-          await uploadFile(next, folderId, (progress) => {
+          if (!folder?.auth_code) {
+            throw new Error("Auth code is required");
+          }
+
+          await uploadFile(next, folderId, folder?.auth_code, (progress) => {
             get().updateProgress(next.id, progress);
           });
 
@@ -147,57 +162,26 @@ export const useTmpFolderStore = create<TmpFolderStore>((set, get) => ({
     })),
 }));
 
-export const createTmpFolder = async (
-  folderName: string,
-): Promise<{ data: TmpFolderResponse | null; error: string | null }> => {
-  const { response, error } = await APICall(
-    `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/tmp-folders`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name: folderName }),
-    },
-  );
-  if (error || !response) {
-    return { data: null, error: error || "Failed to create temporary folder" };
-  }
-  return { data: (await response.json()) as TmpFolderResponse, error: null };
-};
-
-const uploadFile = (
+const uploadFile = async (
   item: UploadItem,
   folderId: string,
+  authCode: string,
   onProgress: (progress: number) => void,
 ) => {
-  return new Promise<void>((resolve, reject) => {
-    const formData = new FormData();
+  const { data: tmpFile, error: uploadError } = await createTmpFile(
+    { file: item.file },
+    { onProgress },
+  );
+  if (uploadError || !tmpFile) {
+    throw new Error(uploadError ?? "Failed to upload file");
+  }
 
-    console.log({ item, folderId });
-
-    formData.append("file", item.file);
-    formData.append("folderId", folderId);
-
-    const xhr = new XMLHttpRequest();
-
-    xhr.upload.onprogress = (e) => {
-      if (!e.lengthComputable) return;
-
-      onProgress(Math.round((e.loaded * 100) / e.total));
-    };
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        resolve();
-      } else {
-        reject(new Error("Upload failed"));
-      }
-    };
-
-    xhr.onerror = () => reject(new Error("Network error"));
-
-    xhr.open("POST", "/api/upload");
-    xhr.send(formData);
+  const { error: addError } = await AddFileToTmpFolder({
+    tmpFolderId: folderId,
+    tmpFileId: tmpFile.id,
+    authCode,
   });
+  if (addError) {
+    throw new Error(addError);
+  }
 };
