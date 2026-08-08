@@ -1,24 +1,47 @@
-import { Check, Copy, ExternalLink } from "lucide-react";
+import { Check, Copy, ExternalLink, File as FileIcon } from "lucide-react";
 import { useState } from "react";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { env } from "@/lib/env";
 import { useTmpFolderStore } from "@/lib/hooks/use-tmp-folder";
+import { cn } from "@/lib/utils";
+
+function formatBytes(bytes: number) {
+  if (bytes === 0) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+}
 
 function FileItem({ file, progress }: { file: File; progress: number }) {
   const done = progress >= 100;
 
   return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between gap-2 bg-muted-foreground/10 py-3 px-2 rounded-lg">
-        <span className="truncate text-sm font-bold text-foreground/80">
-          {file.name}
-        </span>
+    <div className="space-y-1.5">
+      <div className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2 shadow-sm">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10">
+          <FileIcon className="h-5 w-5 text-primary" />
+        </div>
+        <div className="min-w-0 flex-1 text-left">
+          <p className="truncate text-sm font-medium">{file.name}</p>
+          <p className="text-xs text-muted-foreground">
+            {formatBytes(file.size)}
+          </p>
+        </div>
         {!done && (
           <span className="shrink-0 text-xs text-muted-foreground">
             {progress}%
           </span>
         )}
+      </div>
+      <div className="h-1 w-full rounded-full bg-muted-foreground/15">
+        <div
+          className={cn(
+            "h-full rounded-full transition-all",
+            done ? "bg-muted-foreground/10" : "bg-primary",
+          )}
+          style={{ width: `${progress}%` }}
+        />
       </div>
     </div>
   );
@@ -41,8 +64,8 @@ function ListFiles() {
   };
 
   return (
-    <div className="h-full w-md p-2 bg-muted-foreground/5 rounded-lg flex flex-col">
-      <div className="flex items-center gap-1 mb-4">
+    <div className="space-y-3">
+      <div className="flex items-center gap-1">
         <p className="min-w-0 flex-1 select-all truncate font-mono text-xs text-muted-foreground">
           {url}
         </p>
@@ -67,13 +90,12 @@ function ListFiles() {
           <ExternalLink className="size-3.5" />
         </button>
       </div>
-      <ScrollArea className="flex-1 min-h-0">
-        <div className="flex flex-col gap-4">
-          {queue.toReversed().map((file) => (
-            <FileItem key={file.id} file={file.file} progress={file.progress} />
-          ))}
-        </div>
-      </ScrollArea>
+
+      <div className="flex flex-col gap-2">
+        {queue.map((file) => (
+          <FileItem key={file.id} file={file.file} progress={file.progress} />
+        ))}
+      </div>
     </div>
   );
 }

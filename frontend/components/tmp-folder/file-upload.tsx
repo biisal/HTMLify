@@ -13,9 +13,9 @@ function FileUpload() {
   });
 
   return (
-    <section className="w-full h-full flex items-center justify-center">
+    <section>
       {!folder?.name ? (
-        <div className="flex flex-col items-center justify-center gap-4 text-center">
+        <div className="flex flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-muted-foreground/25 py-12 text-center">
           <FolderPlus className="size-8 text-muted-foreground" />
           <p className="text-sm text-muted-foreground">
             Make a folder to upload files
@@ -26,7 +26,7 @@ function FileUpload() {
         <div
           {...getRootProps()}
           className={cn(
-            "m-4 flex h-full w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/5 text-muted-foreground transition-colors",
+            "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/5 py-12 text-muted-foreground transition-colors",
             isDragActive && "border-primary bg-primary/5 text-primary",
           )}
         >
