@@ -201,7 +201,7 @@
   }
 
   html {
-    @apply font-sans;
+    @apply font-mono;
     scroll-behavior: smooth;
   }
 }

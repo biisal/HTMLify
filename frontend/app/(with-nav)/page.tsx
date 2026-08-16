@@ -8,7 +8,6 @@ export default function Home() {
   return (
     <main className="flex-1 h-full h-full mb-20">
       <Hero />
-      <OneClickHosting />
       <Quote />
       <Features />
       <Footer />
