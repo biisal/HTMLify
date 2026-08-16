@@ -42,9 +42,11 @@ export const TmpForm = () => {
             Select File
           </Label>
           <FileDropzone
+            maxFiles={1}
             value={file}
-            onChange={(val) => setFile(val as File)}
-            maxFiles={100}
+            onChange={(val) =>
+              setFile(val ? (Array.isArray(val) ? val[0] : val) : null)
+            }
             className="w-full"
           />
         </div>

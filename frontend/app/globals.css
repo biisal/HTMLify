@@ -199,6 +199,11 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
 }
 
 /* Per-file "Failed to upload" bubbles */
@@ -281,5 +286,35 @@
   100% {
     box-shadow: 30px 0 0 #fff;
     margin-top: 0;
+  }
+}
+
+@keyframes hero-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(40px, -30px, 0) scale(1.15);
+  }
+}
+
+@keyframes hero-drift-2 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-50px, 40px, 0) scale(1.2);
+  }
+}
+
+@keyframes hero-drift-3 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(30px, 50px, 0) scale(1.1);
   }
 }

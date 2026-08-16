@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, HTTPException, Form
+from fastapi import APIRouter, UploadFile, HTTPException, Form , File
 from fastapi.responses import FileResponse
 
 from typing import Optional
@@ -23,7 +23,7 @@ def get_tmp_file(id) -> TmpFileRead:
 
 @router.post("/tmp-files", description="Create TmpFile")
 def create_tmp_file(
-    file: UploadFile,
+    file: UploadFile = File(...),
     name: Optional[str] = Form(None),
     expiry: Optional[int] = Form(None),
 ) -> TmpFileRead:

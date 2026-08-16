@@ -60,12 +60,9 @@ export function FileMetadata({
             {formatExpiryDelta(file.expiry)}
           </span>
           <span className="flex items-center gap-1">
-            <Button
-            size="sm"
-            asChild
-            >
+            <Button size="sm" asChild>
               <Link href={file.url} target="_blank" rel="noreferrer">
-              open ↗
+                open ↗
               </Link>
             </Button>
             <CopyButton value={file.url} />

@@ -2,8 +2,8 @@ import { FolderPlus, UploadCloud } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 
 import { useTmpFolderStore } from "@/lib/hooks/use-tmp-folder";
-import { cn } from "@/lib/utils";
 
+import { Button } from "../ui/button";
 import { AddFolderForm } from "./add-folder-form";
 
 function FileUpload() {
@@ -25,18 +25,18 @@ function FileUpload() {
       ) : (
         <div
           {...getRootProps()}
-          className={cn(
-            "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/5 py-12 text-muted-foreground transition-colors",
-            isDragActive && "border-primary bg-primary/5 text-primary",
-          )}
+          className={"flex items-center justify-center w-full"}
         >
           <input className="hidden" {...getInputProps()} />
-          <UploadCloud className="size-8" />
-          <p className="text-sm">
-            {isDragActive
-              ? "Drop files to upload"
-              : "Drag and drop files here, or click to browse"}
-          </p>
+          <Button
+            type="button"
+            className={`w-full ${isDragActive && ""}`}
+            variant={isDragActive ? "outline" : "default"}
+          >
+            {/* TODO: add better styling */}
+            <UploadCloud className="size-4" />
+            Upload Files
+          </Button>
         </div>
       )}
     </section>

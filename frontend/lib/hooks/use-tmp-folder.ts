@@ -6,6 +6,7 @@ import {
   createTmpFolder,
 } from "@/lib/tmp-folder/tmp-folder.api";
 import { TmpFolderResponse } from "../tmp-folder/tmp-folder.types";
+import { deleteFile } from "../modules/file/file.api";
 
 type UploadStatus = "queued" | "uploading" | "completed" | "failed";
 
@@ -20,7 +21,10 @@ interface TmpFolderStore {
   folder: TmpFolderResponse | null;
   setFolder: (name: string, folderId?: string) => void;
 
-  createFolder: (name: string) => Promise<{ success: boolean; error: string | null }>;
+  createFolder: (
+    name: string,
+  ) => Promise<{ success: boolean; error: string | null }>;
+  deleteFile: (id: number) => void;
 
   queue: UploadItem[];
   isUploading: boolean;
@@ -33,6 +37,16 @@ interface TmpFolderStore {
 export const useTmpFolderStore = create<TmpFolderStore>((set, get) => ({
   folder: null,
 
+  deleteFile: async (id: number) => {
+    const { error } = await deleteFile(id);
+    if (error) {
+      console.error(error);
+      return;
+    }
+    set((state) => ({
+      // queue: state.queue.filter((item) => item.id !== id),
+    }));
+  },
   setFolder: (folderName, folderId = "", authCode = "") =>
     set({
       folder: {
@@ -172,6 +186,7 @@ const uploadFile = async (
     { file: item.file },
     { onProgress },
   );
+  console.log({ tmpFile });
   if (uploadError || !tmpFile) {
     throw new Error(uploadError ?? "Failed to upload file");
   }

@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import { env } from "@/lib/env";
 import { useTmpFolderStore } from "@/lib/hooks/use-tmp-folder";
-import { cn } from "@/lib/utils";
 
 function formatBytes(bytes: number) {
   if (bytes === 0) return "0 B";
@@ -18,7 +17,13 @@ function FileItem({ file, progress }: { file: File; progress: number }) {
 
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2 shadow-sm">
+      <div className="flex items-center gap-3 rounded-lg relative border bg-background px-3 py-2 shadow-sm">
+        {!done && (
+          <div
+            style={{ width: `${progress}%` }}
+            className="absolute h-full w-full left-0 top-0 bg-primary/15"
+          ></div>
+        )}
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10">
           <FileIcon className="h-5 w-5 text-primary" />
         </div>
@@ -33,15 +38,6 @@ function FileItem({ file, progress }: { file: File; progress: number }) {
             {progress}%
           </span>
         )}
-      </div>
-      <div className="h-1 w-full rounded-full bg-muted-foreground/15">
-        <div
-          className={cn(
-            "h-full rounded-full transition-all",
-            done ? "bg-muted-foreground/10" : "bg-primary",
-          )}
-          style={{ width: `${progress}%` }}
-        />
       </div>
     </div>
   );
@@ -92,8 +88,12 @@ function ListFiles() {
       </div>
 
       <div className="flex flex-col gap-2">
-        {queue.map((file) => (
-          <FileItem key={file.id} file={file.file} progress={file.progress} />
+        {queue.toReversed().map((file) => (
+          <FileItem
+            key={file.id}
+            file={file.file}
+            progress={file.progress}
+          />
         ))}
       </div>
     </div>

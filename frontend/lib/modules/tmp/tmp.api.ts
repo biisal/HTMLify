@@ -12,6 +12,7 @@ export const createTmpFile = async (
 ): Promise<{ data: TmpFile | null; error: string | null }> => {
   const formData = new FormData();
   if (data.file) {
+    console.log({ file: typeof data.file });
     formData.append("file", data.file);
   }
   if (data.name) {
