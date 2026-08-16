@@ -5,8 +5,8 @@ import DotPattern from "@/components/ui/dot-pattern";
 export function Quote() {
   return (
     <>
-      <div className="mx-auto flex items-center justify-center min-h-screen my-auto max-w-7xl px-6 md:mb-20 xl:px-0">
-        <div className="relative flex flex-col items-center border border-primary">
+      <div className="mx-auto flex items-center justify-center min-h-screen  max-w-7xl px-6 md:mb-20 xl:px-0">
+        <div className="relative flex flex-col items-center px-5 border border-primary">
           <DotPattern width={5} height={5} />
 
           <div className="absolute -left-1.5 -top-1.5 h-3 w-3 bg-primary text-foreground" />
