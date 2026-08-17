@@ -46,7 +46,9 @@ export function FileIcon({ path }: Props) {
   const ext = lastSegment.includes(".") ? lastSegment.split(".").pop() : null;
 
   if (ext === null) {
-    return <Folder className="h-4 w-4 text-blue-400 shrink-0" fill="currentColor" />;
+    return (
+      <Folder className="h-4 w-4 text-blue-400 shrink-0" fill="currentColor" />
+    );
   }
 
   const entry = colors[ext] ?? {
