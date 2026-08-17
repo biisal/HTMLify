@@ -59,11 +59,11 @@ export function FileTable({ items, totalItems, currentPage, pageSize }: Props) {
         return (
           <div className="flex items-center gap-2.5 min-w-0">
             {isFolder ? (
-              <Folder className="h-4 w-4 text-blue-400 shrink-0" />
+              <Folder fill="currentColor" className="h-4 w-4 text-blue-400 shrink-0" />
             ) : (
               <FileIcon path={item.path} />
             )}
-            <div className="flex flex-col min-w-0">
+            <div className="flex flex-col text-foreground/90 min-w-0">
               {isFolder ? (
                 <Link
                   href={href}
@@ -94,7 +94,7 @@ export function FileTable({ items, totalItems, currentPage, pageSize }: Props) {
         const item = row.original;
         if (isFolderItem(item)) return <div className="hidden lg:table-cell" />;
         return (
-          <span className="text-sm text-muted-foreground capitalize hidden lg:table-cell">
+          <span className="text-sm text-foreground/80 capitalize hidden lg:table-cell">
             {item.mode}
           </span>
         );
@@ -107,15 +107,8 @@ export function FileTable({ items, totalItems, currentPage, pageSize }: Props) {
         const item = row.original;
         if (isFolderItem(item)) return <div className="hidden sm:table-cell" />;
         return (
-          <div className="hidden sm:table-cell items-center gap-1.5 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              {item.visibility === "public" ? (
-                <Globe className="h-3.5 w-3.5 text-emerald-500" />
-              ) : (
-                <Lock className="h-3.5 w-3.5 text-amber-500" />
-              )}
-              <span className="capitalize">{item.visibility}</span>
-            </div>
+          <div className="hidden sm:table-cell items-center gap-1.5 text-sm ">
+            <span className="capitalize text-foreground/80">{item.visibility}</span>
           </div>
         );
       },
@@ -127,11 +120,8 @@ export function FileTable({ items, totalItems, currentPage, pageSize }: Props) {
         const item = row.original;
         if (isFolderItem(item)) return <div className="hidden md:table-cell" />;
         return (
-          <div className="hidden md:table-cell items-center gap-1.5 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <Eye className="h-3.5 w-3.5 opacity-50" />
+          <div className="hidden md:table-cell text-foreground/80 gap-1.5  text-sm">
               {item.views.toLocaleString()}
-            </div>
           </div>
         );
       },
@@ -158,7 +148,7 @@ export function FileTable({ items, totalItems, currentPage, pageSize }: Props) {
         const href = isFolder ? `/dashboard?path=${item.path}` : item.path;
 
         return (
-          <div className="text-right pr-4">
+          <div className="text-right ">
             <DashboardAction isFolder={isFolder} file={item} href={href} />
           </div>
         );

@@ -5,8 +5,9 @@ import {
   AddFileToTmpFolder,
   createTmpFolder,
 } from "@/lib/tmp-folder/tmp-folder.api";
-import { TmpFolderResponse } from "../tmp-folder/tmp-folder.types";
+
 import { deleteFile } from "../modules/file/file.api";
+import { TmpFolderResponse } from "../tmp-folder/tmp-folder.types";
 
 type UploadStatus = "queued" | "uploading" | "completed" | "failed";
 

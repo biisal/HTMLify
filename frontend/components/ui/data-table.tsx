@@ -95,19 +95,19 @@ export function DataTable<TData, TValue>({
           )}
         </div>
       </div>
-      <div className="rounded-md border bg-card/50 backdrop-blur-sm shadow-sm overflow-hidden">
+      <div className="rounded-md bg-card/50 backdrop-blur-sm overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}
-                className="hover:bg-transparent bg-muted/30"
+                className="hover:bg-transparent border-b border-border/40"
               >
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
                       key={header.id}
-                      className="text-xs uppercase tracking-wider py-3"
+                      className="text-xs text-foreground/60 tracking-wider py-3"
                     >
                       {header.isPlaceholder
                         ? null
@@ -127,7 +127,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="group"
+                  className="group border-b border-border/40"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="py-3">

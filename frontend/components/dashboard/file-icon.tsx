@@ -11,40 +11,49 @@ interface Props {
   path: string;
 }
 
+const colors: Record<string, { icon: typeof FileCode; className: string }> = {
+  css: { icon: FileCode, className: "text-purple-400" },
+  scss: { icon: FileCode, className: "text-pink-400" },
+  sass: { icon: FileCode, className: "text-pink-400" },
+  html: { icon: FileCode, className: "text-orange-400" },
+  htm: { icon: FileCode, className: "text-orange-400" },
+  js: { icon: FileCode, className: "text-yellow-400" },
+  mjs: { icon: FileCode, className: "text-yellow-400" },
+  ts: { icon: FileCode, className: "text-blue-400" },
+  tsx: { icon: FileCode, className: "text-cyan-400" },
+  jsx: { icon: FileCode, className: "text-sky-400" },
+  json: { icon: FileCode, className: "text-lime-400" },
+  md: { icon: FileText, className: "text-slate-300" },
+  png: { icon: FileImage, className: "text-pink-400" },
+  jpg: { icon: FileImage, className: "text-orange-400" },
+  jpeg: { icon: FileImage, className: "text-orange-400" },
+  svg: { icon: FileImage, className: "text-amber-400" },
+  gif: { icon: FileImage, className: "text-fuchsia-400" },
+  webp: { icon: FileImage, className: "text-teal-400" },
+  mp3: { icon: FileAudio, className: "text-cyan-400" },
+  wav: { icon: FileAudio, className: "text-sky-400" },
+  ogg: { icon: FileAudio, className: "text-blue-400" },
+  mp4: { icon: FileVideo, className: "text-rose-400" },
+  webm: { icon: FileVideo, className: "text-red-400" },
+  mov: { icon: FileVideo, className: "text-violet-400" },
+  pdf: { icon: FileText, className: "text-red-400" },
+  txt: { icon: FileText, className: "text-slate-300" },
+};
+
 export function FileIcon({ path }: Props) {
   const p = path.toLowerCase();
   const lastSegment = p.split("/").filter(Boolean).pop() ?? "";
   const ext = lastSegment.includes(".") ? lastSegment.split(".").pop() : null;
 
-  switch (ext) {
-    case "css":
-      return <FileCode className="h-4 w-4 text-purple-400 shrink-0" />;
-    case "html":
-    case "htm":
-      return <FileCode className="h-4 w-4 text-orange-400 shrink-0" />;
-    case "js":
-    case "ts":
-    case "jsx":
-    case "tsx":
-      return <FileCode className="h-4 w-4 text-yellow-400 shrink-0" />;
-    case "png":
-    case "jpg":
-    case "jpeg":
-    case "svg":
-    case "gif":
-    case "webp":
-      return <FileImage className="h-4 w-4 text-pink-400 shrink-0" />;
-    case "mp3":
-    case "wav":
-    case "ogg":
-      return <FileAudio className="h-4 w-4 text-cyan-400 shrink-0" />;
-    case "mp4":
-    case "webm":
-    case "mov":
-      return <FileVideo className="h-4 w-4 text-rose-400 shrink-0" />;
-    case null:
-      return <Folder className="h-4 w-4 text-blue-400 shrink-0" />;
-    default:
-      return <FileText className="h-4 w-4 text-muted-foreground shrink-0" />;
+  if (ext === null) {
+    return <Folder className="h-4 w-4 text-blue-400 shrink-0" fill="currentColor" />;
   }
+
+  const entry = colors[ext] ?? {
+    icon: FileText,
+    className: "text-muted-foreground",
+  };
+  const Icon = entry.icon;
+
+  return <Icon className={`h-4 w-4 shrink-0 ${entry.className}`} />;
 }

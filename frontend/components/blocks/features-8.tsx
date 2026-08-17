@@ -21,7 +21,7 @@ const features = [
     title: "Temp file links",
     desc: "Quick, throwaway sharing for when you need a link, not a project.",
   },
-]
+];
 
 export function Features() {
   return (
@@ -57,7 +57,10 @@ export function Features() {
 
           <div className="md:w-1/2 grid grid-cols-1 sm:grid-cols-2  rounded-md overflow-hidden">
             {features.map((f) => (
-              <div key={f.title} className="bg-card/40 hover:bg-card p-5 lg:p-6 group">
+              <div
+                key={f.title}
+                className="bg-card/40 hover:bg-card p-5 lg:p-6 group"
+              >
                 <h3 className="font-mono text-sm font-semibold text-foreground mb-2">
                   {f.title}
                 </h3>
@@ -70,5 +73,5 @@ export function Features() {
         </div>
       </div>
     </section>
-  )
+  );
 }

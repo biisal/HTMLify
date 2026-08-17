@@ -27,7 +27,7 @@ export function DashboardAction({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">
+        <Button variant="ghost" className="text-foreground/50">
           <EllipsisVertical />
         </Button>
       </DropdownMenuTrigger>

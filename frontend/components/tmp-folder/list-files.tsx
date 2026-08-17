@@ -89,11 +89,7 @@ function ListFiles() {
 
       <div className="flex flex-col gap-2">
         {queue.toReversed().map((file) => (
-          <FileItem
-            key={file.id}
-            file={file.file}
-            progress={file.progress}
-          />
+          <FileItem key={file.id} file={file.file} progress={file.progress} />
         ))}
       </div>
     </div>

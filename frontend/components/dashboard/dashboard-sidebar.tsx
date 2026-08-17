@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/sidebar";
 import { env } from "@/lib/env";
 import { UserFullInfo } from "@/lib/modules/user/user.types";
-
 const navFile = [
   {
     title: "Dashboard",

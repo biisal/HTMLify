@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { getFileContentType } from "@/lib/modules/file/file.utils";
-import { FilePreview } from "@/components/file/file-preview";
-import { TmpFolderFile } from "@/lib/tmp-folder/tmp-folder.types";
-import { formatExpiry, formatExpiryDelta, isExpired } from "./utils";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useState } from "react";
+
+import { FilePreview } from "@/components/file/file-preview";
+import { Button } from "@/components/ui/button";
+import { getFileContentType } from "@/lib/modules/file/file.utils";
+import { TmpFolderFile } from "@/lib/tmp-folder/tmp-folder.types";
+
+import { formatExpiry, formatExpiryDelta, isExpired } from "./utils";
 
 function CopyButton({ value }: { value: string }) {
   const [copied, setCopied] = useState(false);

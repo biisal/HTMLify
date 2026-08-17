@@ -20,8 +20,6 @@ const cards = [
 export function Hero() {
   return (
     <section className="relative overflow-hidden border-b border-border">
-     
-
       <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-6 py-24 md:py-28">
         <div className="max-w-3xl">
           <span className="font-mono text-xs text-muted-foreground/60 tracking-widest uppercase">
@@ -41,7 +39,7 @@ export function Hero() {
 
         <div className="mt-16 grid max-w-4xl gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  rounded-md overflow-hidden">
           {cards.map((c) => (
-            <div key={c.title} className="   p-4 pl-0" >
+            <div key={c.title} className="   p-4 pl-0">
               <h3 className="font-mono text-sm font-semibold text-foreground mb-2">
                 {c.title}
               </h3>
