@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { env } from "@/lib/env";
 import { createTmpFile } from "@/lib/modules/tmp/tmp.api";
 import {
   AddFileToTmpFolder,
@@ -30,6 +31,11 @@ interface TmpFolderStore {
   queue: UploadItem[];
   isUploading: boolean;
 
+  url: string | null;
+  copied: boolean;
+  copyUrl: () => void;
+  resetCopy: () => void;
+
   addFiles: (files: File[]) => void;
   startQueue: () => Promise<void>;
   updateProgress: (id: string, progress: number) => void;
@@ -44,7 +50,7 @@ export const useTmpFolderStore = create<TmpFolderStore>((set, get) => ({
       console.error(error);
       return;
     }
-    set((state) => ({
+    set(() => ({
       // queue: state.queue.filter((item) => item.id !== id),
     }));
   },
@@ -56,6 +62,10 @@ export const useTmpFolderStore = create<TmpFolderStore>((set, get) => ({
         name: folderName,
         auth_code: authCode,
       },
+      url: folderId
+        ? `${env.NEXT_PUBLIC_SITE_URL}/tmp/f/${folderId}`
+        : null,
+      copied: false,
     }),
 
   createFolder: async (name: string) => {
@@ -64,7 +74,11 @@ export const useTmpFolderStore = create<TmpFolderStore>((set, get) => ({
       if (error || !data) {
         return { success: false, error: error ?? "Failed to create folder" };
       }
-      set({ folder: data });
+      set({
+        folder: data,
+        url: `${env.NEXT_PUBLIC_SITE_URL}/tmp/f/${data.id}`,
+        copied: false,
+      });
       return { success: true, error: null };
     } catch (err) {
       console.error(err);
@@ -74,6 +88,21 @@ export const useTmpFolderStore = create<TmpFolderStore>((set, get) => ({
 
   queue: [],
   isUploading: false,
+
+  url: null,
+  copied: false,
+
+  copyUrl: () => {
+    const { folder } = get();
+    if (!folder?.id) return;
+    const url = `${env.NEXT_PUBLIC_SITE_URL}/tmp/f/${folder.id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      set({ copied: true });
+      setTimeout(() => set({ copied: false }), 1800);
+    });
+  },
+
+  resetCopy: () => set({ copied: false }),
 
   addFiles: (files) => {
     set((state) => ({
@@ -127,6 +156,8 @@ export const useTmpFolderStore = create<TmpFolderStore>((set, get) => ({
 
             set({
               folder: data,
+              url: `${env.NEXT_PUBLIC_SITE_URL}/tmp/f/${data.id}`,
+              copied: false,
             });
           }
 

@@ -3,7 +3,6 @@
 import { useCallback } from "react";
 
 import { createTmpFile } from "@/lib/modules/tmp/tmp.api";
-import { TmpFile } from "@/lib/modules/tmp/tmp.types";
 import { useTmpFormStore } from "@/lib/stores/tmp-form.store";
 
 const EXPIRY_OPTIONS = [

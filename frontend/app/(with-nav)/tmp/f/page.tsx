@@ -11,8 +11,8 @@ const TempFolderPage = () => {
   return (
     <div className="w-full px-8 pt-10 flex flex-col items-center justify-center">
       <div className="w-full max-w-4xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
+        <div className="text-start space-y-2">
+          <h1 className="text-3xl md:text-4xl font-mono tracking-tight">
             Temporary Folder Links
           </h1>
           <p className="text-muted-foreground text-lg">

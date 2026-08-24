@@ -1,7 +1,6 @@
 import { Features } from "@/components/blocks/features-8";
 import { Footer } from "@/components/home/footer";
 import { Hero } from "@/components/home/hero";
-import { OneClickHosting } from "@/components/home/one-click-hosting";
 import { Quote } from "@/components/quote";
 
 export default function Home() {
