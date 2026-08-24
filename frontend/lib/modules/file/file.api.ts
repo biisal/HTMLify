@@ -69,6 +69,56 @@ export const uploadFile = async (
   return { data: (await response.json()) as FileIDResponse, error: null };
 };
 
+interface UploadFileOptions {
+  onProgress?: (progress: number) => void;
+}
+
+export const uploadFileWithProgress = async (
+  formData: FormData,
+  options?: UploadFileOptions,
+): Promise<{ data: FileIDResponse | null; error: string | null }> => {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(
+      "POST",
+      `${env.NEXT_PUBLIC_BACKEND_API_URL}/v1/files/upload`,
+    );
+    xhr.withCredentials = true;
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable && options?.onProgress) {
+        options.onProgress(Math.round((event.loaded / event.total) * 100));
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          resolve({
+            data: JSON.parse(xhr.responseText) as FileIDResponse,
+            error: null,
+          });
+        } catch {
+          resolve({ data: null, error: "Invalid response from server" });
+        }
+      } else {
+        let msg = "Upload failed";
+        try {
+          const body = JSON.parse(xhr.responseText);
+          msg = body?.detail ?? msg;
+        } catch {}
+        resolve({ data: null, error: msg });
+      }
+    };
+
+    xhr.onerror = () => {
+      resolve({ data: null, error: "Failed to upload file" });
+    };
+
+    xhr.send(formData);
+  });
+};
+
 export const updateFile = async (
   id: number,
   formData: FormData,

@@ -1,13 +1,13 @@
 import "./globals.css";
 
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
 import { Toaster } from "sonner";
 
 import { Providers } from "@/components/providers";
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-mono",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${jetbrainsMono.variable} font-mono antialiased`}>
+      <body className={`${geistSans.className} antialiased`}>
         <Providers
           attribute="class"
           defaultTheme="system"

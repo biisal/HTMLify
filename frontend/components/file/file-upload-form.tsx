@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, File as FileIcon, Folder, Lock } from "lucide-react";
+import { Eye, EyeOff, File as FileIcon, Folder, Lock, X } from "lucide-react";
 import { ReactNode, useState } from "react";
 import {
   Controller,
@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import z from "zod";
 
 import { AlertDialog } from "@/components/alert-dialog";
-import { FileDropzone } from "@/components/file/file-dropzone";
+import { DropzoneArea } from "@/components/file/dropzone-area";
 import { FilePreview } from "@/components/file/file-preview";
 import { ModeSelect, VisibilitySelect } from "@/components/file/select-fields";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ import {
   hasFileExtention,
 } from "@/lib/modules/file/file.utils";
 import { UserFullInfo } from "@/lib/modules/user/user.types";
-import { zodToFormData } from "@/lib/utils";
+import { formatBytes, zodToFormData } from "@/lib/utils";
 
 type InputFieldConfig = {
   name: keyof FileFormType;
@@ -264,12 +264,40 @@ export const FileForm = ({
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>File</FieldLabel>
-                  <FileDropzone
-                    maxSize={env.NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB * 1024 * 1024}
-                    maxFiles={1}
-                    value={field.value}
-                    onChange={(value) => handleFileChange(value, field)}
-                  />
+                  {field.value ? (
+                    <div className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2 shadow-sm">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10">
+                        <FileIcon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1 text-left">
+                        <p className="truncate text-sm font-medium">
+                          {field.value.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatBytes(field.value.size)}
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                        onClick={() => handleFileChange(null, field)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <DropzoneArea
+                      maxFiles={1}
+                      maxSize={
+                        env.NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB * 1024 * 1024
+                      }
+                      onDrop={(files) =>
+                        handleFileChange(files[0] ?? null, field)
+                      }
+                    />
+                  )}
                   <FieldError errors={[fieldState.error]} />
                 </Field>
               )}

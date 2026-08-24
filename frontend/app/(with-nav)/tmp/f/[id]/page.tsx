@@ -1,16 +1,17 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
+
+import { ListFiles } from "@/components/tmp/folder/file-list";
+import { EmptyState, FileMetadata } from "@/components/tmp/folder/file-preview";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { getTmpFolderFiles } from "@/lib/tmp-folder/tmp-folder.api";
 import { TmpFolderFile } from "@/lib/tmp-folder/tmp-folder.types";
-import { ListFiles } from "@/components/tmp/folder/file-list";
-import { FileMetadata, EmptyState } from "@/components/tmp/folder/file-preview";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const TmpFolderPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);

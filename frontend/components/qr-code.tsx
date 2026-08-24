@@ -28,7 +28,7 @@ export const QRCode = ({ url, fgColor, bgColor }: QRCodeProps) => {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground self-start md:self-center">
+      <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground  self-center">
         QR Code
       </p>
       <div className="relative rounded-2xl overflow-hidden border border-border shadow-sm">

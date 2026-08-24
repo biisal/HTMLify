@@ -1,9 +1,9 @@
 import { create } from "zustand";
 
-import { TmpFile, TmpFormType } from "@/lib/modules/tmp/tmp.types";
+import { TmpFile } from "@/lib/modules/tmp/tmp.types";
 
 interface TmpFormStore {
-  folderName : string
+  folderName: string;
   file: File | null;
   name: string;
   expiry: string;

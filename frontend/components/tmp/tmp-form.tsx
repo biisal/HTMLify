@@ -1,6 +1,8 @@
 "use client";
 
-import { FileDropzone } from "@/components/file/file-dropzone";
+import { File as FileIcon, X } from "lucide-react";
+
+import { DropzoneArea } from "@/components/file/dropzone-area";
 import { TmpResult } from "@/components/tmp/tmp-result";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTmpForm } from "@/lib/hooks/use-tmp-form";
+import { formatBytes } from "@/lib/utils";
 
 export const TmpForm = () => {
   const {
@@ -41,12 +44,33 @@ export const TmpForm = () => {
           <Label className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground mb-2 block">
             Select File
           </Label>
-          <FileDropzone
-            value={file}
-            onChange={(val) => setFile(val as File)}
-            maxFiles={100}
-            className="w-full"
-          />
+          {file ? (
+            <div className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2 shadow-sm">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10">
+                <FileIcon className="h-5 w-5 text-primary" />
+              </div>
+              <div className="min-w-0 flex-1 text-left">
+                <p className="truncate text-sm font-medium">{file.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {formatBytes(file.size)}
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => setFile(null)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <DropzoneArea
+              maxFiles={1}
+              onDrop={(files) => setFile(files[0] ?? null)}
+            />
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

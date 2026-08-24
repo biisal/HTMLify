@@ -2,9 +2,8 @@
 
 import { useCallback } from "react";
 
-import { useTmpFormStore } from "@/lib/stores/tmp-form.store";
 import { createTmpFile } from "@/lib/modules/tmp/tmp.api";
-import { TmpFile } from "@/lib/modules/tmp/tmp.types";
+import { useTmpFormStore } from "@/lib/stores/tmp-form.store";
 
 const EXPIRY_OPTIONS = [
   { label: "1 Minute", value: "60" },

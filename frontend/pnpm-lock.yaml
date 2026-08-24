@@ -168,8 +168,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@audio-ui/utils@0.0.4':
-    resolution: {integrity: sha512-3YwTeGosycK0Gl/bpGRXGnXIZO4pS+VmFgJjSmdUNYq7BQV5ZTuvBNZ/cBcPdDv+Zyx72HmdmQhhUSTbLzUwjA==}
+  '@audio-ui/utils@0.0.5':
+    resolution: {integrity: sha512-D+yJLWahXlhN/po8vXXjCRaNCKVkVsb2kozjh+gJrjH2oiH1Kh89IGtzTGQMAskbal84Gj2CZ7aut4I9PBIVPw==}
 
   '@babel/code-frame@7.29.0':
     resolution: {integrity: sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw==}
@@ -4336,13 +4336,13 @@ snapshots:
 
   '@audio-ui/react@0.0.6(@types/react@19.2.14)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@audio-ui/utils': 0.0.4
+      '@audio-ui/utils': 0.0.5
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@audio-ui/utils@0.0.4': {}
+  '@audio-ui/utils@0.0.5': {}
 
   '@babel/code-frame@7.29.0':
     dependencies:
