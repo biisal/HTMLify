@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { DasshboardNavbar } from "@/components/dashboard/dashbaord-navbar";
 import { FileUpload } from "@/components/file/upload/files-upload";
+import { PageShell } from "@/components/page-shell";
 import { getMe } from "@/lib/modules/user/user.actions";
 
 const UploadPage = async () => {
@@ -10,12 +10,12 @@ const UploadPage = async () => {
     redirect("/");
   }
   return (
-    <>
-      <DasshboardNavbar title="Upload Files" />
-      <div className="w-full max-w-7xl mx-auto pt-10 px-4">
-        <FileUpload user={user} />
-      </div>
-    </>
+    <PageShell
+      title="Upload Files"
+      description="Drag and drop files to upload them to your workspace."
+    >
+      <FileUpload user={user} />
+    </PageShell>
   );
 };
 

@@ -1,16 +1,12 @@
-import { Check, Copy, FolderPlus, Upload } from "lucide-react";
-import { useDropzone } from "react-dropzone";
+import { Check, Copy, FolderPlus } from "lucide-react";
 
+import { DropzoneArea } from "@/components/file/dropzone-area";
 import { useTmpFolderStore } from "@/lib/hooks/use-tmp-folder";
-import { cn } from "@/lib/utils";
 
 import { AddFolderForm } from "./add-folder-form";
 
 function FileUpload() {
   const { addFiles, folder, url, copied, copyUrl } = useTmpFolderStore();
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (files) => addFiles(files),
-  });
 
   return (
     <section>
@@ -43,25 +39,7 @@ function FileUpload() {
               </button>
             </div>
           )}
-          <div
-            {...getRootProps()}
-            className={cn(
-              "flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors",
-              isDragActive
-                ? "border-primary bg-primary/5"
-                : "border-muted-foreground/25 hover:border-muted-foreground/50 hover:bg-muted/30",
-            )}
-          >
-            <input {...getInputProps()} />
-            <div className="flex flex-col items-center gap-2 text-center">
-              <Upload className="size-6 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">
-                {isDragActive
-                  ? "Drop files here"
-                  : "Drag & drop files here, or click to select"}
-              </p>
-            </div>
-          </div>
+          <DropzoneArea onDrop={(files) => addFiles(files)} />
         </div>
       )}
     </section>

@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 import { type Accept, type FileRejection, useDropzone } from "react-dropzone";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, formatBytes } from "@/lib/utils";
 
 interface FileDropzoneProps {
   value?: File | File[] | null;
@@ -14,14 +14,6 @@ interface FileDropzoneProps {
   maxFiles?: number;
   onChange?: (value: File | File[] | null) => void;
   className?: string;
-}
-
-function formatBytes(bytes: number) {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 }
 
 export function FileDropzone({
