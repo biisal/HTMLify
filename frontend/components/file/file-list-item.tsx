@@ -8,7 +8,7 @@ interface FileListItemProps {
   name: string;
   size: number;
   progress: number;
-  onRemove?: () => void;
+  onRemove?: (e: React.MouseEvent) => void;
 }
 
 

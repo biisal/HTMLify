@@ -1,10 +1,10 @@
 "use client";
 
-import { AlertCircle, CloudUpload, File as FileIcon, X } from "lucide-react";
+import { AlertCircle, CloudUpload } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { type Accept, type FileRejection, useDropzone } from "react-dropzone";
 
-import { Button } from "@/components/ui/button";
+import { FileListItem } from "@/components/file/file-list-item";
 import { cn, formatBytes } from "@/lib/utils";
 
 interface FileDropzoneProps {
@@ -113,29 +113,13 @@ export function FileDropzone({
         ) : (
           <div className="flex w-full flex-col gap-2">
             {files.map((file, i) => (
-              <div
+              <FileListItem
                 key={i}
-                className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2 shadow-sm animate-in fade-in zoom-in-95 duration-200"
-              >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10">
-                  <FileIcon className="h-5 w-5 text-primary" />
-                </div>
-                <div className="min-w-0 flex-1 text-left">
-                  <p className="truncate text-sm font-medium">{file.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatBytes(file.size)}
-                  </p>
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                  onClick={(e) => removeFile(e, i)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
+                name={file.name}
+                size={file.size}
+                progress={100}
+                onRemove={(e) => removeFile(e, i)}
+              />
             ))}
             {isDragActive && (
               <div className="mt-2 text-xs font-medium text-primary flex items-center justify-center gap-2">
