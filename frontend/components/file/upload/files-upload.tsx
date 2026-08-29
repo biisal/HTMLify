@@ -14,7 +14,7 @@ export const FileUpload = ({ user }: { user: UserFullInfo }) => {
   const [folderPath, setFolderPath] = useState(`/${user.username}/`);
   const [folderSet, setFolderSet] = useState(false);
   const [subfolder, setSubfolder] = useState("");
-  const { queue, addFiles } = useFileUploadStore();
+  const { queue, addFiles , deleteFile} = useFileUploadStore();
 
   const handleSetFolder = () => {
     if (subfolder.trim()) {
@@ -87,7 +87,8 @@ export const FileUpload = ({ user }: { user: UserFullInfo }) => {
           <div className="flex flex-col">
             {[...queue].reverse().map((item) => (
               <FileListItem
-                key={item.id}
+                onRemove={() => deleteFile(item.localId)}
+                key={item.localId}
                 name={item.file.name}
                 size={item.file.size}
                 progress={item.progress}
