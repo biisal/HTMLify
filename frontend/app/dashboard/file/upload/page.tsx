@@ -13,6 +13,7 @@ const UploadPage = async () => {
     <PageShell
       title="Upload Files"
       description="Drag and drop files to upload them to your workspace."
+      className="mb-52"
     >
       <FileUpload user={user} />
     </PageShell>
