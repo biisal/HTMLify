@@ -62,7 +62,7 @@ const StaticServe = async ({
   if (fileData.isMedia) {
     const { url, fileType, contentType } = fileData;
     return (
-      <div className="flex flex-col items-center max-h-[70vh]">
+      <div className="flex flex-col h-full items-center justify-center">
         <MediaViewer
           src={url}
           type={fileType}

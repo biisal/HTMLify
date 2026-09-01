@@ -1,8 +1,10 @@
 "use client";
 
-import { FileAudioIcon, FileImageIcon, FileVideoIcon } from "lucide-react";
+import { FileAudioIcon, } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { FileIcon } from "./dashboard/file-icon";
 
 type MediaType = "img" | "video" | "audio";
 
@@ -22,11 +24,13 @@ export function MediaViewer({
   const mimeLabel = contentType?.split(";")[0];
 
   return (
-    <Card className="  gap-0  overflow-hidden">
+    <Card className="bg-muted/20  gap-0  overflow-hidden">
       <CardHeader>
-        <CardTitle className="flex items-center">
+        <CardTitle className="flex items-center gap-2">
           <MediaIcon type={type} />
-          {filename ?? src}
+					<h1 className="text-muted-foreground">
+						{filename ?? src}
+          </h1>
           {mimeLabel && (
             <span className="ml-auto shrink-0 text-muted-foreground/60">
               {mimeLabel}
@@ -35,7 +39,7 @@ export function MediaViewer({
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="flex min-w-xl items-center justify-center p-4 bg-muted/20">
+      <CardContent className="flex min-w-lg items-center justify-center pt-4">
         {type === "img" && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -74,8 +78,17 @@ export function MediaViewer({
 }
 
 function MediaIcon({ type }: { type: MediaType }) {
-  const cls = "size-3.5 shrink-0";
-  if (type === "video") return <FileVideoIcon className={cls} />;
-  if (type === "audio") return <FileAudioIcon className={cls} />;
-  return <FileImageIcon className={cls} />;
+	let path : string= type
+	switch (type) {
+		case "video":
+			path = ".mp4";
+			break;
+		case "audio":
+			path = ".mp3";
+			break;
+		default:
+			path = ".jpg";
+			break;
+	}
+  return <FileIcon path={path} />;
 }
