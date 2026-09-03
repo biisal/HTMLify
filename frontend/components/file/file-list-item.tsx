@@ -11,8 +11,12 @@ interface FileListItemProps {
   onRemove?: (e: React.MouseEvent) => void;
 }
 
-
-export function FileListItem({ name, size, progress, onRemove }: FileListItemProps) {
+export function FileListItem({
+  name,
+  size,
+  progress,
+  onRemove,
+}: FileListItemProps) {
   const done = progress >= 100;
 
   return (

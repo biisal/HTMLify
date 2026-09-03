@@ -275,9 +275,7 @@ export const FileForm = ({
                   ) : (
                     <DropzoneArea
                       maxFiles={1}
-                      maxSize={
-                        env.NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB * 1024 * 1024
-                      }
+                      maxSize={env.NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB * 1024 * 1024}
                       onDrop={(files) =>
                         handleFileChange(files[0] ?? null, field)
                       }

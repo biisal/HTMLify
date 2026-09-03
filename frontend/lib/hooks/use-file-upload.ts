@@ -1,6 +1,9 @@
 import { create } from "zustand";
 
-import { deleteFile, uploadFileWithProgress } from "@/lib/modules/file/file.api";
+import {
+  deleteFile,
+  uploadFileWithProgress,
+} from "@/lib/modules/file/file.api";
 import { FileIDResponse } from "@/lib/modules/file/file.types";
 
 type UploadStatus = "queued" | "uploading" | "completed" | "failed";
@@ -79,7 +82,9 @@ export const useFileUploadStore = create<FileUploadStore>((set, get) => ({
 
         set((state) => ({
           queue: state.queue.map((item) =>
-            item.localId === next.localId ? { ...item, status: "uploading" as const } : item,
+            item.localId === next.localId
+              ? { ...item, status: "uploading" as const }
+              : item,
           ),
         }));
 
@@ -103,7 +108,13 @@ export const useFileUploadStore = create<FileUploadStore>((set, get) => ({
           set((state) => ({
             queue: state.queue.map((item) =>
               item.localId === next.localId
-                ? { ...item, id: data.id, status: "completed", progress: 100, response: data }
+                ? {
+                    ...item,
+                    id: data.id,
+                    status: "completed",
+                    progress: 100,
+                    response: data,
+                  }
                 : item,
             ),
           }));

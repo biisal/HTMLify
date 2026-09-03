@@ -27,7 +27,7 @@ export function DropzoneArea({
     accept,
     maxSize,
     maxFiles,
-    multiple: maxFiles !== undefined && maxFiles > 1, 
+    multiple: maxFiles !== undefined && maxFiles > 1,
   });
 
   return (

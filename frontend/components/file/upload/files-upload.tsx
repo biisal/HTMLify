@@ -17,11 +17,13 @@ export const FileUpload = ({ user }: { user: UserFullInfo }) => {
   const dirParam = searchParams.get("dir");
 
   const [folderPath, setFolderPath] = useState(
-    dirParam ? `/${user.username}/${dirParam.replace(/^\//, "")}` : `/${user.username}/`,
+    dirParam
+      ? `/${user.username}/${dirParam.replace(/^\//, "")}`
+      : `/${user.username}/`,
   );
   const [folderSet, setFolderSet] = useState(!!dirParam);
   const [subfolder, setSubfolder] = useState(dirParam || "");
-  const { queue, addFiles, deleteFile  , clearQueue} = useFileUploadStore();
+  const { queue, addFiles, deleteFile, clearQueue } = useFileUploadStore();
 
   const updateUrlParams = (path: string) => {
     const params = new URLSearchParams(window.location.search);
@@ -31,8 +33,8 @@ export const FileUpload = ({ user }: { user: UserFullInfo }) => {
     } else {
       params.delete("dir");
     }
-    
-    clearQueue()
+
+    clearQueue();
     router.replace(`?${params.toString()}`);
   };
 
@@ -101,9 +103,7 @@ export const FileUpload = ({ user }: { user: UserFullInfo }) => {
       {queue.length > 0 && (
         <div className="border-t border-border/40">
           <div className="px-4 py-2">
-            <p className="text-xs font-medium text-muted-foreground">
-              Uploads
-            </p>
+            <p className="text-xs font-medium text-muted-foreground">Uploads</p>
           </div>
           <div className="flex flex-col">
             {[...queue].reverse().map((item) => (

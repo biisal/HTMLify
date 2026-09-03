@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  Check,
-  Clock,
-  Copy,
-  ExternalLink,
-  Share2,
-} from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { Check, Clock, Copy, ExternalLink, Share2 } from "lucide-react";
+import { useState } from "react";
 
 import { FileIcon } from "@/components/dashboard/file-icon";
 import { QRCode } from "@/components/qr-code";
@@ -15,43 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TmpFile } from "@/lib/modules/tmp/tmp.types";
 import { cn } from "@/lib/utils";
+import { shareContent, useClipboard, useDebounce } from "@/lib/utils/actions";
 
 import { Separator } from "../ui/separator";
-
-interface UseClipboardReturn {
-  copied: boolean;
-  copy: () => void;
-}
-
-const useClipboard = (
-  text: string,
-  timeout: number = 1800,
-): UseClipboardReturn => {
-  const [copied, setCopied] = useState<boolean>(false);
-  const copy = () => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), timeout);
-    });
-  };
-  return { copied, copy };
-};
-
-const useDebounce = <T,>(value: T, delay: number): T => {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-};
 
 interface ActionButtonProps {
   icon: React.ElementType;
@@ -76,7 +36,10 @@ const ActionButton = ({
     {active && SuccessIcon ? (
       <SuccessIcon size={14} className="text-primary" />
     ) : (
-      <Icon size={14} className="text-muted-foreground group-hover:text-foreground transition-colors" />
+      <Icon
+        size={14}
+        className="text-muted-foreground group-hover:text-foreground transition-colors"
+      />
     )}
     <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
       {active ? "Copied!" : label}
@@ -98,11 +61,7 @@ export const TmpResult = ({ result, className, ...props }: TmpResultProps) => {
   const { copied, copy } = useClipboard(result.url);
 
   const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({ url: result.url });
-    } else {
-      copy();
-    }
+    shareContent({ url: result.url, fallbackCopy: true });
   };
 
   const expiryDate = new Date(result.expiry).toLocaleString();
@@ -129,7 +88,7 @@ export const TmpResult = ({ result, className, ...props }: TmpResultProps) => {
             </div>
           </div>
 
-          <Separator className="py-0 my-0"/>
+          <Separator className="py-0 my-0" />
 
           <div>
             <p className="text-[11px] font-medium uppercase tracking-widest text-foreground/70 mb-2">
@@ -142,7 +101,7 @@ export const TmpResult = ({ result, className, ...props }: TmpResultProps) => {
             </div>
           </div>
 
-          <Separator className="py-0 my-0"/>
+          <Separator className="py-0 my-0" />
 
           <div>
             <p className="text-[11px] font-medium uppercase tracking-widest text-foreground/70 mb-2">
