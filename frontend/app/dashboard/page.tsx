@@ -53,15 +53,15 @@ const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
   return (
     <>
       <DasshboardNavbar className="w-full">
-        <div className="flex items-center justify-between w-full">
+        <div className="flex items-center h-full justify-between w-full">
           <DashboardBreadcrumb path={path} />
-          <Button size="sm" asChild>
-            <Link href="/dashboard/file/new">
+					<Link href="/dashboard/file/new" className="border-x border-x-border h-full flex 
+						hover:bg-foreground/5
+            items-center px-4 text-sm gap-2">
               <Plus className="h-4 w-4" />
               New
             </Link>
-          </Button>
-        </div>
+					</div>
       </DasshboardNavbar>
       <div className="flex flex-col gap-4 p-6 w-full">
         <FileTable

@@ -175,7 +175,7 @@ export default function CodeEditor({
   const [currentLanguage, setCurrentLanguage] = useState<string>(language);
 
   return (
-    <div className="h-[70vh] my-4 rounded-sm border border-border/60 overflow-hidden shadow-sm flex flex-col min-w-0">
+    <div className="h-[70vh] rounded-sm border border-border/60 overflow-hidden shadow-sm flex flex-col min-w-0">
       <EditorHeader
         path={path}
         onLanguageChange={setCurrentLanguage}

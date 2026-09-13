@@ -1,9 +1,9 @@
 import { Music } from "lucide-react";
 
 import { FileType } from "@/lib/modules/file/file.types";
+import { getLanguageByPath } from "@/lib/modules/playgournd/editor.utils";
 
 import CodeEditor from "../playgroud/code-editor";
-import { getLanguageByPath } from "@/lib/modules/playgournd/editor.utils";
 
 const getCacheBustedUrl = (url: string | null | undefined) => {
   if (!url) return "";

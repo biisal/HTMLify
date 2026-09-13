@@ -1,24 +1,11 @@
 "use client";
 
-import {
-  Check,
-  Copy,
-  Download,
-  FileAudio as FileAudioIcon,
-  Share2,
-} from "lucide-react";
-import { useState } from "react";
+import { FileAudio as FileAudioIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import {
-  copyToClipboard,
-  downloadFile,
-  shareContent,
-} from "@/lib/utils/actions";
 
 import { FileIcon } from "./dashboard/file-icon";
+import { MediaActions } from "./media-actions";
 
 type MediaType = "img" | "video" | "audio";
 
@@ -27,6 +14,8 @@ interface MediaViewerProps {
   type: MediaType;
   filename?: string;
   contentType?: string | null;
+  /** Frontend URL used for copy/share instead of the backend src */
+  copyUrl?: string;
 }
 
 export function MediaViewer({
@@ -34,32 +23,9 @@ export function MediaViewer({
   type,
   filename,
   contentType,
+  copyUrl,
 }: MediaViewerProps) {
   const mimeLabel = contentType?.split(";")[0];
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyUrl = async () => {
-    const success = await copyToClipboard(src, {
-      successMessage: "URL copied to clipboard",
-      errorMessage: "Failed to copy URL",
-    });
-    if (success) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
-  const handleDownload = () => {
-    downloadFile(src, filename);
-  };
-
-  const handleShare = () => {
-    shareContent({
-      title: filename || "Shared file",
-      url: src,
-      fallbackCopy: true,
-    });
-  };
 
   return (
     <Card className="bg-muted/20 gap-0 overflow-hidden">
@@ -111,47 +77,7 @@ export function MediaViewer({
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-1  px-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCopyUrl}
-            className="gap-1.5 text-muted-foreground"
-          >
-            {copied ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <Copy className="h-4 w-4" />
-            )}
-            <span className="hidden sm:inline">
-              {copied ? "Copied" : "Copy URL"}
-            </span>
-          </Button>
-
-          <Separator orientation="vertical" className="h-5" />
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDownload}
-            className="text-muted-foreground"
-          >
-            <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">Download</span>
-          </Button>
-
-          <Separator orientation="vertical" className="h-5" />
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleShare}
-            className="text-muted-foreground"
-          >
-            <Share2 className="h-4 w-4" />
-            <span className="hidden sm:inline">Share</span>
-          </Button>
-        </div>
+        <MediaActions src={src} copyUrl={copyUrl} filename={filename} className="px-4" />
       </CardContent>
     </Card>
   );
