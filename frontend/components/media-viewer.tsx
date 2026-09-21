@@ -77,7 +77,12 @@ export function MediaViewer({
           )}
         </div>
 
-        <MediaActions src={src} copyUrl={copyUrl} filename={filename} className="px-4" />
+        <MediaActions
+          src={src}
+          copyUrl={copyUrl}
+          filename={filename}
+          className="px-4"
+        />
       </CardContent>
     </Card>
   );

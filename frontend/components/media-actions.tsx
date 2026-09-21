@@ -70,11 +70,7 @@ export function MediaActions({
         onClick={handleCopyUrl}
         className="gap-1.5 text-muted-foreground"
       >
-        {copied ? (
-          <Check className="h-4 w-4" />
-        ) : (
-          <Copy className="h-4 w-4" />
-        )}
+        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
         <span className="hidden sm:inline">
           {copied ? "Copied" : "Copy URL"}
         </span>

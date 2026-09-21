@@ -43,7 +43,9 @@ export function Navbar() {
               key={index}
               href={link.href}
               className={`text-sm font-medium h-full min-w-22 flex items-center justify-center px-6 transition-colors hover:bg-foreground/5 hover:text-foreground ${
-                link.href === pathname ? "bg-foreground/5" : "text-muted-foreground"
+                link.href === pathname
+                  ? "bg-foreground/5"
+                  : "text-muted-foreground"
               }`}
             >
               {link.name}
@@ -61,7 +63,10 @@ export function Navbar() {
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52 flex flex-col gap-1 p-2">
+              <DropdownMenuContent
+                align="end"
+                className="w-52 flex flex-col gap-1 p-2"
+              >
                 {NAV_LINKS.map((link, index) => (
                   <DropdownMenuItem key={index} asChild>
                     <Link

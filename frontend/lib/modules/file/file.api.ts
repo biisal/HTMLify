@@ -4,8 +4,7 @@ import { GitCloneFormType } from "@/lib/modules/file/file.schema";
 import { FileIDResponse, FolderResponse } from "@/lib/modules/file/file.types";
 
 type FileInfoParams =
-  | { path: string; id?: never }
-  | { path?: never; id: number };
+  { path: string; id?: never } | { path?: never; id: number };
 
 export const getFileInfoByPathOrID = async ({
   path,

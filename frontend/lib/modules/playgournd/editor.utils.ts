@@ -1,10 +1,5 @@
 type LanguageGroup =
-  | "Web"
-  | "Backend"
-  | "Config & Markup"
-  | "DevOps"
-  | "Shell"
-  | "Other";
+  "Web" | "Backend" | "Config & Markup" | "DevOps" | "Shell" | "Other";
 
 const extToLanguage: Record<
   string,

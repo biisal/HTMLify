@@ -1,8 +1,13 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, File as FileIcon, Folder, Lock } from "lucide-react";
+import { Eye, EyeOff, File as FileIcon, Lock } from "lucide-react";
 import { useState } from "react";
-import { Controller, ControllerRenderProps, useForm, useWatch } from "react-hook-form";
+import {
+  Controller,
+  ControllerRenderProps,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
@@ -13,7 +18,12 @@ import { FilePreview } from "@/components/file/file-preview";
 import { ModeSelect, VisibilitySelect } from "@/components/file/select-fields";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import {
   InputGroup,
   InputGroupAddon,
@@ -24,7 +34,10 @@ import { env } from "@/lib/env";
 import { updateFile, uploadFile } from "@/lib/modules/file/file.api";
 import { fileFormSchema, FileFormType } from "@/lib/modules/file/file.schema";
 import { FileType } from "@/lib/modules/file/file.types";
-import { getFileContentType, hasFileExtention } from "@/lib/modules/file/file.utils";
+import {
+  getFileContentType,
+  hasFileExtention,
+} from "@/lib/modules/file/file.utils";
 import { UserFullInfo } from "@/lib/modules/user/user.types";
 import { zodToFormData } from "@/lib/utils";
 
@@ -52,7 +65,11 @@ type FileFormProps =
       user: UserFullInfo;
     };
 
-export const FileForm = ({ user, initialData, mode = "upload" }: FileFormProps) => {
+export const FileForm = ({
+  user,
+  initialData,
+  mode = "upload",
+}: FileFormProps) => {
   const [isPending, setIsPending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const modeText = mode.charAt(0).toUpperCase() + mode.slice(1);
@@ -61,7 +78,9 @@ export const FileForm = ({ user, initialData, mode = "upload" }: FileFormProps) 
   const [currentFileType, setCurrentFileType] = useState<FileType>(
     initialData?.fileType || "other",
   );
-  const [mediaUrl, setMediaUrl] = useState<string | null>(initialData?.mediaUrl || null);
+  const [mediaUrl, setMediaUrl] = useState<string | null>(
+    initialData?.mediaUrl || null,
+  );
 
   const pathPrefix = `/${user.username}/`;
 
@@ -72,7 +91,9 @@ export const FileForm = ({ user, initialData, mode = "upload" }: FileFormProps) 
       title: initialData?.title || "",
       password: initialData?.password || "",
       file: undefined,
-      path: initialData?.path ? initialData.path.replace(new RegExp(`^${pathPrefix}`), "") : "",
+      path: initialData?.path
+        ? initialData.path.replace(new RegExp(`^${pathPrefix}`), "")
+        : "",
       mode: initialData?.mode || "source",
       visibility: initialData?.visibility || "public",
     },
@@ -84,7 +105,10 @@ export const FileForm = ({ user, initialData, mode = "upload" }: FileFormProps) 
     return `${pathPrefix}${path}`;
   }
 
-  const onSubmit = async (data: z.infer<typeof fileFormSchema>, force = false) => {
+  const onSubmit = async (
+    data: z.infer<typeof fileFormSchema>,
+    force = false,
+  ) => {
     if (currentFileType === "other") {
       data = {
         ...data,
@@ -110,7 +134,9 @@ export const FileForm = ({ user, initialData, mode = "upload" }: FileFormProps) 
     if (error) {
       toast.error(error);
     } else {
-      toast.success(`File ${mode === "update" ? "updated" : "uploaded"} successfully`);
+      toast.success(
+        `File ${mode === "update" ? "updated" : "uploaded"} successfully`,
+      );
 
       if (mode === "upload") {
         form.reset();
@@ -205,7 +231,9 @@ export const FileForm = ({ user, initialData, mode = "upload" }: FileFormProps) 
                         type={showPassword ? "text" : "password"}
                         placeholder="password (optional)"
                       />
-                      <InputGroupButton onClick={() => setShowPassword((prev) => !prev)}>
+                      <InputGroupButton
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
                         {showPassword ? <EyeOff /> : <Eye />}
                       </InputGroupButton>
                     </InputGroup>
@@ -258,7 +286,9 @@ export const FileForm = ({ user, initialData, mode = "upload" }: FileFormProps) 
                     <DropzoneArea
                       maxFiles={1}
                       maxSize={env.NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB * 1024 * 1024}
-                      onDrop={(files) => handleFileChange(files[0] ?? null, field)}
+                      onDrop={(files) =>
+                        handleFileChange(files[0] ?? null, field)
+                      }
                     />
                   )}
                   <FieldError errors={[fieldState.error]} />
